@@ -43,11 +43,22 @@ interface Order {
   shippingAddress: string;
 }
 
+interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  isAdmin: boolean;
+  createdAt: string;
+  googleId?: string;
+}
+
 const Admin: React.FC = () => {
   const { user, isAdmin } = useAuth();
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'config'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'config' | 'users'>('products');
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [users, setUsers] = useState<AdminUser[]>([]);
   const [siteConfig, setSiteConfig] = useState<SiteConfig>({
     siteName: 'Moda Agora',
     siteDescription: 'Sua loja de moda online',
@@ -72,6 +83,16 @@ const Admin: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [imageInputType, setImageInputType] = useState<'url' | 'file'>('url');
+  
+  // Estados para gerenciamento de usuários
+  const [userForm, setUserForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    isAdmin: false
+  });
+  const [editingUser, setEditingUser] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Verificar se o usuário é admin
   if (!user || !isAdmin) {
@@ -216,6 +237,18 @@ const Admin: React.FC = () => {
       setOrders(exampleOrders);
       localStorage.setItem('adminOrders', JSON.stringify(exampleOrders));
     }
+    
+    // Carregar usuários
+    const savedUsers = localStorage.getItem('users');
+    if (savedUsers) {
+      const allUsers = JSON.parse(savedUsers);
+      // Adicionar data de criação se não existir
+      const usersWithDate = allUsers.map((u: any) => ({
+        ...u,
+        createdAt: u.createdAt || new Date().toISOString()
+      }));
+      setUsers(usersWithDate);
+    }
   }, []);
 
   const handleProductSubmit = (e: React.FormEvent) => {
@@ -296,6 +329,101 @@ const Admin: React.FC = () => {
     }
   };
 
+  // Funções para gerenciamento de usuários
+  const handleUserSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      if (editingUser) {
+        // Editar usuário existente
+        const updatedUsers = allUsers.map((u: AdminUser) => 
+          u.id === editingUser 
+            ? { ...u, ...userForm }
+            : u
+        );
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        setUsers(updatedUsers);
+        setEditingUser(null);
+      } else {
+        // Verificar se email já existe
+        const existingUser = allUsers.find((u: AdminUser) => u.email === userForm.email);
+        if (existingUser) {
+          alert('Já existe um usuário com este email!');
+          return;
+        }
+        
+        // Adicionar novo usuário
+        const newUser: AdminUser = {
+          ...userForm,
+          id: Date.now().toString(),
+          createdAt: new Date().toISOString()
+        };
+        const updatedUsers = [...allUsers, newUser];
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        setUsers(updatedUsers);
+      }
+      
+      // Limpar formulário
+      setUserForm({
+        name: '',
+        email: '',
+        password: '',
+        isAdmin: false
+      });
+      
+      alert(editingUser ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao salvar usuário:', error);
+      alert('Erro ao salvar usuário.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditUser = (user: AdminUser) => {
+    setUserForm({
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      isAdmin: user.isAdmin
+    });
+    setEditingUser(user.id);
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    if (userId === 'admin') {
+      alert('Não é possível excluir o usuário administrador padrão!');
+      return;
+    }
+    
+    if (window.confirm('Tem certeza que deseja excluir este usuário?')) {
+      const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      const updatedUsers = allUsers.filter((u: AdminUser) => u.id !== userId);
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+      setUsers(updatedUsers);
+    }
+  };
+
+  const handleChangePassword = (userId: string, newPassword: string) => {
+    if (!newPassword.trim()) {
+      alert('A senha não pode estar vazia!');
+      return;
+    }
+    
+    const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    const updatedUsers = allUsers.map((u: AdminUser) => 
+      u.id === userId 
+        ? { ...u, password: newPassword }
+        : u
+    );
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    setUsers(updatedUsers);
+    alert('Senha alterada com sucesso!');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -323,6 +451,16 @@ const Admin: React.FC = () => {
                 }`}
               >
                 Pedidos
+              </button>
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'users'
+                    ? 'border-pink-500 text-pink-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Usuários
               </button>
               <button
                 onClick={() => setActiveTab('config')}
@@ -713,6 +851,183 @@ const Admin: React.FC = () => {
                   {orders.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
                       Nenhum pedido recebido ainda.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'users' && (
+            <div className="mt-6">
+              <h1 className="text-3xl font-bold text-gray-900 mb-6">Gerenciar Usuários</h1>
+              
+              {/* Formulário de Usuário */}
+              <div className="bg-white shadow rounded-lg p-6 mb-6">
+                <h2 className="text-xl font-semibold mb-4">
+                  {editingUser ? 'Editar Usuário' : 'Adicionar Novo Usuário'}
+                </h2>
+                
+                <form onSubmit={handleUserSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Nome</label>
+                      <input
+                        type="text"
+                        value={userForm.name}
+                        onChange={(e) => setUserForm({...userForm, name: e.target.value})}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Email</label>
+                      <input
+                        type="email"
+                        value={userForm.email}
+                        onChange={(e) => setUserForm({...userForm, email: e.target.value})}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Senha</label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          value={userForm.password}
+                          onChange={(e) => setUserForm({...userForm, password: e.target.value})}
+                          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 pr-10"
+                          required={!editingUser}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                        >
+                          {showPassword ? '👁️' : '👁️‍🗨️'}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={userForm.isAdmin}
+                        onChange={(e) => setUserForm({...userForm, isAdmin: e.target.checked})}
+                        className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
+                      />
+                      <label className="ml-2 block text-sm text-gray-900">Administrador</label>
+                    </div>
+                  </div>
+                  
+                  <div className="flex space-x-4">
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 disabled:bg-gray-400"
+                    >
+                      {isLoading ? 'Salvando...' : (editingUser ? 'Atualizar' : 'Adicionar')}
+                    </button>
+                    
+                    {editingUser && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingUser(null);
+                          setUserForm({
+                            name: '',
+                            email: '',
+                            password: '',
+                            isAdmin: false
+                          });
+                        }}
+                        className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+                      >
+                        Cancelar
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+              
+              {/* Lista de Usuários */}
+              <div className="bg-white shadow rounded-lg">
+                <div className="px-6 py-4 border-b border-gray-200">
+                  <h3 className="text-lg font-medium">Usuários Cadastrados ({users.length})</h3>
+                </div>
+                
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data de Criação</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {users.map((user) => (
+                        <tr key={user.id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                            {user.googleId && (
+                              <div className="text-xs text-blue-600">Conta Google</div>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {user.email}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              user.isAdmin 
+                                ? 'bg-purple-100 text-purple-800' 
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {user.isAdmin ? 'Administrador' : 'Usuário'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(user.createdAt).toLocaleDateString('pt-BR')}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button
+                              onClick={() => handleEditUser(user)}
+                              className="text-pink-600 hover:text-pink-900"
+                            >
+                              Editar
+                            </button>
+                            <button
+                              onClick={() => {
+                                const newPassword = prompt('Digite a nova senha:');
+                                if (newPassword) {
+                                  handleChangePassword(user.id, newPassword);
+                                }
+                              }}
+                              className="text-blue-600 hover:text-blue-900"
+                            >
+                              Alterar Senha
+                            </button>
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="text-red-600 hover:text-red-900"
+                              disabled={user.id === 'admin'}
+                            >
+                              Excluir
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  
+                  {users.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      Nenhum usuário cadastrado ainda.
                     </div>
                   )}
                 </div>

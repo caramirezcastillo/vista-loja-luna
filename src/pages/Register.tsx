@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -208,6 +209,30 @@ const Register: React.FC = () => {
               </button>
             </div>
           </form>
+          
+          {/* Divisor */}
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-50 text-gray-500">Ou</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Cadastro com Google */}
+          <div className="mt-6">
+            <GoogleLoginButton 
+              onSuccess={() => {
+                // Sucesso já é tratado pelo componente
+              }}
+              onError={(error) => {
+                setErrors({ general: 'Erro ao fazer cadastro com Google. Tente novamente.' });
+              }}
+            />
+          </div>
         </div>
       </div>
       

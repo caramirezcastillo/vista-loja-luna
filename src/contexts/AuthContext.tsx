@@ -10,6 +10,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
+  loginWithGoogle: (googleUser: any) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -79,6 +80,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const loginWithGoogle = async (googleUser: any): Promise<boolean> => {
+    try {
+      // Extrair informações do usuário do Google
+      const profile = googleUser.getBasicProfile();
+      const googleUserData = {
+        id: `google_${profile.getId()}`,
+        name: profile.getName(),
+        email: profile.getEmail(),
+        isAdmin: false
+      };
+      
+      // Verificar se o usuário já existe no sistema
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      let existingUser = users.find((u: any) => u.email === googleUserData.email);
+      
+      if (!existingUser) {
+        // Criar novo usuário se não existir
+        const newUser = {
+          ...googleUserData,
+          password: '', // Usuários do Google não precisam de senha local
+          googleId: profile.getId()
+        };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        existingUser = newUser;
+      }
+      
+      // Fazer login
+      const userWithoutPassword = {
+        id: existingUser.id,
+        name: existingUser.name,
+        email: existingUser.email,
+        isAdmin: existingUser.isAdmin || false
+      };
+      
+      setUser(userWithoutPassword);
+      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+      
+      return true;
+    } catch (error) {
+      console.error('Erro no login com Google:', error);
+      return false;
+    }
+  };
+
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       // Verificar se o usuário já existe
@@ -126,6 +172,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     user,
     login,
+    loginWithGoogle,
     register,
     logout,
     isAuthenticated: !!user,
