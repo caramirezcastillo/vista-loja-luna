@@ -30,7 +30,6 @@ const Cart = () => {
             </Button>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
