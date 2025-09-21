@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-fashion.jpg";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  
   return (
     <section className="relative h-[70vh] min-h-[500px] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -27,6 +30,7 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <Button 
               size="lg" 
+              onClick={() => navigate('/feminino')}
               className="bg-gradient-gold hover:bg-fashion-gold-dark text-fashion-black font-semibold px-8 py-3 shadow-gold transition-all duration-300 hover:shadow-lg hover:scale-105"
             >
               Comprar Agora
@@ -34,6 +38,7 @@ const HeroSection = () => {
             <Button 
               variant="outline" 
               size="lg"
+              onClick={() => navigate('/feminino')}
               className="border-white/30 text-white hover:bg-white/10 px-8 py-3 transition-all duration-300"
             >
               Ver Coleção

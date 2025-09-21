@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, User, Search, Menu, Heart } from "lucide-react";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 
 const Header = () => {
-  const [cartCount] = useState(3);
+  const navigate = useNavigate();
+  const { getTotalItems } = useCart();
+  const cartCount = getTotalItems();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/95">
@@ -14,19 +17,22 @@ const Header = () => {
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-5 w-5" />
           </Button>
-          <h1 className="text-2xl font-bold bg-gradient-gold bg-clip-text text-transparent">
+          <button 
+            onClick={() => navigate('/')}
+            className="text-2xl font-bold bg-gradient-gold bg-clip-text text-transparent hover:opacity-80 transition-opacity cursor-pointer"
+          >
             LUXE
-          </h1>
+          </button>
         </div>
 
         {/* Navigation - Hidden on mobile */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <button 
+            onClick={() => navigate('/feminino')}
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
             Feminino
-          </a>
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Masculino
-          </a>
+          </button>
           <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             Acessórios
           </a>
@@ -46,7 +52,7 @@ const Header = () => {
           <Button variant="ghost" size="icon">
             <User className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')}>
             <ShoppingBag className="h-5 w-5" />
             {cartCount > 0 && (
               <Badge 

@@ -2,9 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useState } from "react";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
-  id: string;
+  id: number;
   name: string;
   price: number;
   originalPrice?: number;
@@ -15,6 +17,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ 
+  id,
   name, 
   price, 
   originalPrice, 
@@ -25,6 +28,23 @@ const ProductCard = ({
 }: ProductCardProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { addItem } = useCart();
+
+  const handleAddToCart = () => {
+    addItem({
+      id,
+      name,
+      price,
+      image,
+      size: "M", // Default size
+      color: "Padrão" // Default color
+    });
+    
+    toast({
+      title: "Produto adicionado!",
+      description: `${name} foi adicionado ao seu carrinho.`,
+    });
+  };
 
   const formatPrice = (value: number) => 
     new Intl.NumberFormat('pt-BR', { 
@@ -81,6 +101,7 @@ const ProductCard = ({
           <Button 
             className="w-full bg-fashion-black text-white hover:bg-fashion-black/90 transition-all duration-300"
             size="sm"
+            onClick={handleAddToCart}
           >
             <ShoppingBag className="h-4 w-4 mr-2" />
             Adicionar ao Carrinho

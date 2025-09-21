@@ -7,7 +7,7 @@ import productBag from "@/assets/product-bag.jpg";
 const ProductGrid = () => {
   const products = [
     {
-      id: "1",
+      id: 1,
       name: "Vestido Elegante Preto",
       price: 299.90,
       originalPrice: 399.90,
@@ -16,15 +16,7 @@ const ProductGrid = () => {
       isSale: true,
     },
     {
-      id: "2", 
-      name: "Camisa Social Branca",
-      price: 189.90,
-      image: productShirt,
-      category: "Masculino",
-      isNew: true,
-    },
-    {
-      id: "3",
+      id: 2,
       name: "Blazer Feminino Moderno",
       price: 459.90,
       image: productBlazer,
@@ -32,7 +24,7 @@ const ProductGrid = () => {
       isNew: true,
     },
     {
-      id: "4",
+      id: 3,
       name: "Bolsa de Couro Premium",
       price: 599.90,
       originalPrice: 799.90,
@@ -41,29 +33,22 @@ const ProductGrid = () => {
       isSale: true,
     },
     {
-      id: "5",
-      name: "Vestido Elegante Preto",
+      id: 4,
+      name: "Vestido Casual Elegante",
       price: 299.90,
       image: productDress,
       category: "Feminino",
     },
     {
-      id: "6",
-      name: "Camisa Social Branca",
-      price: 189.90,
-      image: productShirt,
-      category: "Masculino",
-    },
-    {
-      id: "7",
-      name: "Blazer Feminino Moderno",
+      id: 5,
+      name: "Blazer Executivo",
       price: 459.90,
       image: productBlazer,
       category: "Feminino",
     },
     {
-      id: "8",
-      name: "Bolsa de Couro Premium",
+      id: 6,
+      name: "Bolsa Executiva Premium",
       price: 599.90,
       image: productBag,
       category: "Acessórios",
