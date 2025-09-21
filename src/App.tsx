@@ -11,6 +11,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import Cart from "./pages/Cart";
 import Feminino from "./pages/Feminino";
+import Blusas from "./pages/Blusas";
+import Vestidos from "./pages/Vestidos";
+import Shorts from "./pages/Shorts";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
@@ -34,6 +37,9 @@ const App = () => (
                    <Route path="/cart" element={<Cart />} />
                    <Route path="/favorites" element={<Favorites />} />
                    <Route path="/feminino" element={<Feminino />} />
+                   <Route path="/blusas" element={<Blusas />} />
+                   <Route path="/vestidos" element={<Vestidos />} />
+                   <Route path="/shorts" element={<Shorts />} />
                    <Route path="/login" element={<Login />} />
                    <Route path="/register" element={<Register />} />
                    <Route 

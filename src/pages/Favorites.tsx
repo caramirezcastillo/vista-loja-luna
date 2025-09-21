@@ -100,7 +100,7 @@ const Favorites = () => {
                   variant="outline"
                   onClick={() => navigate('/feminino')}
                 >
-                  Moda Feminina
+                  Nossas Coleções
                 </Button>
               </div>
             </div>

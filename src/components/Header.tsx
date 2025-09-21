@@ -62,17 +62,23 @@ const Header = () => {
         {/* Navigation - Hidden on mobile */}
         <nav className="hidden md:flex items-center space-x-8">
           <button 
-            onClick={() => navigate('/feminino')}
+            onClick={() => navigate('/blusas')}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
-            Feminino
+            Blusas
           </button>
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Acessórios
-          </a>
-          <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Sale
-          </a>
+          <button 
+            onClick={() => navigate('/vestidos')}
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Vestidos
+          </button>
+          <button 
+            onClick={() => navigate('/shorts')}
+            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Shorts
+          </button>
         </nav>
 
         {/* Actions */}
