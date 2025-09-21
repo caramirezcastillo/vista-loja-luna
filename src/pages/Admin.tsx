@@ -93,6 +93,11 @@ const Admin: React.FC = () => {
   });
   const [editingUser, setEditingUser] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordChangeUser, setPasswordChangeUser] = useState<AdminUser | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingUserData, setEditingUserData] = useState<AdminUser | null>(null);
 
   // Verificar se o usuário é admin
   if (!user || !isAdmin) {
@@ -332,10 +337,12 @@ const Admin: React.FC = () => {
   // Funções para gerenciamento de usuários
   const handleUserSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('handleUserSubmit chamado', { userForm, editingUser });
     setIsLoading(true);
 
     try {
       const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      console.log('Usuários existentes:', allUsers);
       
       if (editingUser) {
         // Editar usuário existente
@@ -347,11 +354,13 @@ const Admin: React.FC = () => {
         localStorage.setItem('users', JSON.stringify(updatedUsers));
         setUsers(updatedUsers);
         setEditingUser(null);
+        console.log('Usuário editado:', updatedUsers);
       } else {
         // Verificar se email já existe
         const existingUser = allUsers.find((u: AdminUser) => u.email === userForm.email);
         if (existingUser) {
           alert('Já existe um usuário com este email!');
+          setIsLoading(false);
           return;
         }
         
@@ -361,9 +370,12 @@ const Admin: React.FC = () => {
           id: Date.now().toString(),
           createdAt: new Date().toISOString()
         };
+        console.log('Novo usuário criado:', newUser);
         const updatedUsers = [...allUsers, newUser];
+        console.log('Lista atualizada:', updatedUsers);
         localStorage.setItem('users', JSON.stringify(updatedUsers));
         setUsers(updatedUsers);
+        console.log('Estado users atualizado');
       }
       
       // Limpar formulário
@@ -377,20 +389,15 @@ const Admin: React.FC = () => {
       alert(editingUser ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
     } catch (error) {
       console.error('Erro ao salvar usuário:', error);
-      alert('Erro ao salvar usuário.');
+      alert('Erro ao salvar usuário: ' + error.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleEditUser = (user: AdminUser) => {
-    setUserForm({
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      isAdmin: user.isAdmin
-    });
-    setEditingUser(user.id);
+    setEditingUserData(user);
+    setShowEditModal(true);
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -1003,10 +1010,9 @@ const Admin: React.FC = () => {
                             </button>
                             <button
                               onClick={() => {
-                                const newPassword = prompt('Digite a nova senha:');
-                                if (newPassword) {
-                                  handleChangePassword(user.id, newPassword);
-                                }
+                                setPasswordChangeUser(user);
+                                setShowPasswordModal(true);
+                                setNewPassword('');
                               }}
                               className="text-blue-600 hover:text-blue-900"
                             >
@@ -1142,6 +1148,211 @@ const Admin: React.FC = () => {
           )}
         </div>
       </div>
+      
+      {/* Modal de Alteração de Senha */}
+      {showPasswordModal && passwordChangeUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-medium mb-4">
+              Alterar Senha - {passwordChangeUser.name}
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nova Senha
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  placeholder="Digite a nova senha"
+                  minLength={6}
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setShowPasswordModal(false);
+                    setPasswordChangeUser(null);
+                    setNewPassword('');
+                  }}
+                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    if (newPassword.length >= 6) {
+                      handleChangePassword(passwordChangeUser.id, newPassword);
+                      setShowPasswordModal(false);
+                      setPasswordChangeUser(null);
+                      setNewPassword('');
+                    } else {
+                      alert('A senha deve ter pelo menos 6 caracteres');
+                    }
+                  }}
+                  className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700"
+                  disabled={!newPassword || newPassword.length < 6}
+                >
+                  Alterar Senha
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Modal de Edição de Usuário */}
+      {showEditModal && editingUserData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-medium mb-4">
+              Editar Usuário - {editingUserData.name}
+            </h3>
+            
+            <form onSubmit={(e) => {
+               e.preventDefault();
+               const formData = new FormData(e.target as HTMLFormElement);
+               const updatedUser: AdminUser = {
+                 ...editingUserData,
+                 name: formData.get('name') as string,
+                 email: formData.get('email') as string,
+                 isAdmin: formData.get('isAdmin') === 'on'
+               };
+               
+               // Validações de segurança
+               if (!updatedUser.name.trim()) {
+                 alert('Nome é obrigatório!');
+                 return;
+               }
+               
+               if (!updatedUser.email.trim()) {
+                 alert('Email é obrigatório!');
+                 return;
+               }
+               
+               // Verificar se email já existe (exceto o próprio usuário)
+               const allUsers = JSON.parse(localStorage.getItem('users') || '[]');
+               const emailExists = allUsers.some((u: AdminUser) => 
+                 u.email === updatedUser.email && u.id !== editingUserData.id
+               );
+               
+               if (emailExists) {
+                 alert('Já existe outro usuário com este email!');
+                 return;
+               }
+               
+               // Verificar se não está removendo o último administrador
+               if (editingUserData.isAdmin && !updatedUser.isAdmin) {
+                 const adminCount = allUsers.filter((u: AdminUser) => u.isAdmin).length;
+                 if (adminCount <= 1) {
+                   alert('Não é possível remover o último administrador do sistema!');
+                   return;
+                 }
+               }
+               
+               // Verificar se não está editando o admin padrão para remover privilégios
+               if (editingUserData.id === 'admin' && !updatedUser.isAdmin) {
+                 alert('Não é possível remover privilégios de administrador do usuário padrão!');
+                 return;
+               }
+               
+               // Atualizar usuário no localStorage
+               const updatedUsers = allUsers.map((u: AdminUser) => 
+                 u.id === editingUserData.id ? updatedUser : u
+               );
+               localStorage.setItem('users', JSON.stringify(updatedUsers));
+               setUsers(updatedUsers);
+               
+               // Fechar modal
+               setShowEditModal(false);
+               setEditingUserData(null);
+               
+               alert('Usuário atualizado com sucesso!');
+             }} className="space-y-4">
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nome Completo
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={editingUserData.name}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  defaultValue={editingUserData.email}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+                />
+              </div>
+              
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="isAdmin"
+                  id="editIsAdmin"
+                  defaultChecked={editingUserData.isAdmin}
+                  className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded"
+                />
+                <label htmlFor="editIsAdmin" className="ml-2 block text-sm text-gray-900">
+                  Administrador
+                </label>
+              </div>
+              
+              <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-yellow-800">
+                      Alteração de Role
+                    </h3>
+                    <div className="mt-2 text-sm text-yellow-700">
+                      <p>Alterar o role de um usuário pode afetar suas permissões no sistema. Administradores têm acesso total ao painel.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingUserData(null);
+                  }}
+                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700"
+                >
+                  Salvar Alterações
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       
       <Footer />
     </div>

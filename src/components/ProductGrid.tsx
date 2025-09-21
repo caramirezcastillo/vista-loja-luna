@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from "./ProductCard";
+import { useSearch } from "@/contexts/SearchContext";
 import productDress from "@/assets/product-dress.jpg";
 import productShirt from "@/assets/product-shirt.jpg";
 import productBlazer from "@/assets/product-blazer.jpg";
@@ -20,6 +21,7 @@ interface Product {
 
 const ProductGrid = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const { searchTerm, isSearchActive, searchProducts } = useSearch();
 
   // Produtos padrão (fallback)
   const defaultProducts: Product[] = [
@@ -97,26 +99,43 @@ const ProductGrid = () => {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Produtos em Destaque
+            {isSearchActive && searchTerm ? `Resultados para "${searchTerm}"` : 'Produtos em Destaque'}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Descubra nossa seleção cuidadosa de peças exclusivas para todos os estilos e ocasiões.
+            {isSearchActive && searchTerm 
+              ? `Encontramos ${searchProducts(products, searchTerm).length} produto(s) para sua busca.`
+              : 'Descubra nossa seleção cuidadosa de peças exclusivas para todos os estilos e ocasiões.'
+            }
           </p>
         </div>
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => (
+          {(isSearchActive && searchTerm ? searchProducts(products, searchTerm) : products).map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}
         </div>
 
-        {/* Load More Button */}
-        <div className="text-center mt-12">
-          <button className="bg-fashion-black text-white px-8 py-3 rounded-lg hover:bg-fashion-black/90 transition-colors duration-300 font-semibold">
-            Ver Mais Produtos
-          </button>
-        </div>
+        {/* No Results Message */}
+        {isSearchActive && searchTerm && searchProducts(products, searchTerm).length === 0 && (
+          <div className="text-center mt-12">
+            <p className="text-lg text-muted-foreground mb-4">
+              Nenhum produto encontrado para "{searchTerm}"
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Tente buscar por outros termos ou navegue por nossas categorias.
+            </p>
+          </div>
+        )}
+
+        {/* Load More Button - Only show when not searching */}
+        {(!isSearchActive || !searchTerm) && (
+          <div className="text-center mt-12">
+            <button className="bg-fashion-black text-white px-8 py-3 rounded-lg hover:bg-fashion-black/90 transition-colors duration-300 font-semibold">
+              Ver Mais Produtos
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

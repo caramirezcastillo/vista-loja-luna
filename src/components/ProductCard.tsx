@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import { toast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
@@ -26,9 +27,12 @@ const ProductCard = ({
   isNew = false, 
   isSale = false 
 }: ProductCardProps) => {
-  const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  
+  const productData = { id, name, price, originalPrice, image, category, isNew, isSale };
+  const isProductFavorite = isFavorite(id);
 
   const handleAddToCart = () => {
     addItem({
@@ -43,6 +47,14 @@ const ProductCard = ({
     toast({
       title: "Produto adicionado!",
       description: `${name} foi adicionado ao seu carrinho.`,
+    });
+  };
+
+  const handleToggleFavorite = () => {
+    toggleFavorite(productData);
+    toast({
+      title: isProductFavorite ? "Removido dos favoritos" : "Adicionado aos favoritos",
+      description: `${name} foi ${isProductFavorite ? 'removido dos' : 'adicionado aos'} seus favoritos.`,
     });
   };
 
@@ -85,13 +97,13 @@ const ProductCard = ({
           variant="ghost"
           size="icon"
           className={`absolute top-3 right-3 transition-all duration-300 ${
-            isLiked 
+            isProductFavorite 
               ? 'text-red-500 bg-white/90' 
               : 'text-gray-600 bg-white/80 hover:bg-white/90'
           }`}
-          onClick={() => setIsLiked(!isLiked)}
+          onClick={handleToggleFavorite}
         >
-          <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
+          <Heart className={`h-5 w-5 ${isProductFavorite ? 'fill-current' : ''}`} />
         </Button>
 
         {/* Hover Actions */}
