@@ -1,13 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, User, Search, Menu, Heart } from "lucide-react";
+import { ShoppingBag, User, Search, Menu, Heart, LogOut, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "../contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const navigate = useNavigate();
   const { getTotalItems } = useCart();
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const cartCount = getTotalItems();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/95">
@@ -49,9 +63,40 @@ const Header = () => {
           <Button variant="ghost" size="icon" className="hidden sm:flex">
             <Heart className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon">
-            <User className="h-5 w-5" />
-          </Button>
+          
+          {/* User Menu */}
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-2 py-1.5 text-sm font-medium">
+                  Olá, {user?.name}
+                </div>
+                <DropdownMenuSeparator />
+                {isAdmin && (
+                  <>
+                    <DropdownMenuItem onClick={() => navigate('/admin')}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Painel Admin
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button variant="ghost" size="icon" onClick={() => navigate('/login')}>
+              <User className="h-5 w-5" />
+            </Button>
+          )}
           <Button variant="ghost" size="icon" className="relative" onClick={() => navigate('/cart')}>
             <ShoppingBag className="h-5 w-5" />
             {cartCount > 0 && (
