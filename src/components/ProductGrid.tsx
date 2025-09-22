@@ -77,21 +77,19 @@ const ProductGrid = () => {
 
   // Carregar produtos do localStorage
   useEffect(() => {
+    let allProducts = [...defaultProducts]; // Sempre incluir produtos padrão
+    
     const savedProducts = localStorage.getItem('adminProducts');
     if (savedProducts) {
       const adminProducts = JSON.parse(savedProducts);
-      // Filtrar apenas produtos em estoque
-      const availableProducts = adminProducts.filter((product: Product) => product.inStock !== false);
+      // Filtrar apenas produtos em estoque do admin
+      const availableAdminProducts = adminProducts.filter((product: Product) => product.inStock !== false);
       
-      if (availableProducts.length > 0) {
-        // Combinar produtos do admin com produtos padrão
-        setProducts([...availableProducts, ...defaultProducts]);
-      } else {
-        setProducts(defaultProducts);
-      }
-    } else {
-      setProducts(defaultProducts);
+      // Adicionar produtos do admin aos produtos padrão
+      allProducts = [...availableAdminProducts, ...defaultProducts];
     }
+    
+    setProducts(allProducts);
   }, []);
 
   return (

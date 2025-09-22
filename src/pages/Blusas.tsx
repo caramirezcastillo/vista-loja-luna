@@ -209,22 +209,24 @@ const Blusas = () => {
   ];
 
   useEffect(() => {
+    // Sempre começar com produtos padrão de blusas
+    let allProducts = [...defaultBlusasProducts];
+    
     // Carregar produtos do localStorage e filtrar apenas blusas
     const savedProducts = localStorage.getItem('adminProducts');
-    let filteredProducts = defaultBlusasProducts;
-
     if (savedProducts) {
       const adminProducts = JSON.parse(savedProducts);
       const blusasFromAdmin = adminProducts.filter((product: Product) => 
         product.category.toLowerCase().includes('blusa') && product.inStock !== false
       );
       
+      // Adicionar blusas do admin aos produtos padrão
       if (blusasFromAdmin.length > 0) {
-        filteredProducts = [...blusasFromAdmin, ...defaultBlusasProducts];
+        allProducts = [...blusasFromAdmin, ...defaultBlusasProducts];
       }
     }
 
-    setProducts(filteredProducts);
+    setProducts(allProducts);
   }, []);
 
   return (

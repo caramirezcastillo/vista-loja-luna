@@ -217,22 +217,24 @@ const Shorts = () => {
   ];
 
   useEffect(() => {
+    // Sempre começar com produtos padrão de shorts
+    let allProducts = [...defaultShortsProducts];
+    
     // Carregar produtos do localStorage e filtrar apenas shorts
     const savedProducts = localStorage.getItem('adminProducts');
-    let filteredProducts = defaultShortsProducts;
-
     if (savedProducts) {
       const adminProducts = JSON.parse(savedProducts);
       const shortsFromAdmin = adminProducts.filter((product: Product) => 
         product.category.toLowerCase().includes('short') && product.inStock !== false
       );
       
+      // Adicionar shorts do admin aos produtos padrão
       if (shortsFromAdmin.length > 0) {
-        filteredProducts = [...shortsFromAdmin, ...defaultShortsProducts];
+        allProducts = [...shortsFromAdmin, ...defaultShortsProducts];
       }
     }
 
-    setProducts(filteredProducts);
+    setProducts(allProducts);
   }, []);
 
   return (

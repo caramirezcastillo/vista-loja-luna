@@ -227,22 +227,24 @@ const Vestidos = () => {
   ];
 
   useEffect(() => {
+    // Sempre começar com produtos padrão de vestidos
+    let allProducts = [...defaultVestidosProducts];
+    
     // Carregar produtos do localStorage e filtrar apenas vestidos
     const savedProducts = localStorage.getItem('adminProducts');
-    let filteredProducts = defaultVestidosProducts;
-
     if (savedProducts) {
       const adminProducts = JSON.parse(savedProducts);
       const vestidosFromAdmin = adminProducts.filter((product: Product) => 
         product.category.toLowerCase().includes('vestido') && product.inStock !== false
       );
       
+      // Adicionar vestidos do admin aos produtos padrão
       if (vestidosFromAdmin.length > 0) {
-        filteredProducts = [...vestidosFromAdmin, ...defaultVestidosProducts];
+        allProducts = [...vestidosFromAdmin, ...defaultVestidosProducts];
       }
     }
 
-    setProducts(filteredProducts);
+    setProducts(allProducts);
   }, []);
 
   return (
