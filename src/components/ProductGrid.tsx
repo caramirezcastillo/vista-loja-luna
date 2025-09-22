@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from "./ProductCard";
 import { useSearch } from "@/contexts/SearchContext";
-import productDress from "@/assets/product-dress.jpg";
-import productShirt from "@/assets/product-shirt.jpg";
-import productBlazer from "@/assets/product-blazer.jpg";
-import productBag from "@/assets/product-bag.jpg";
 
 interface Product {
   id: string | number;
@@ -24,72 +20,17 @@ const ProductGrid = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const { searchTerm, isSearchActive, searchProducts } = useSearch();
 
-  // Produtos padrão (fallback)
-  const defaultProducts: Product[] = [
-    {
-      id: 1,
-      name: "Vestido Elegante Preto",
-      price: 299.90,
-      originalPrice: 399.90,
-      image: productDress,
-      category: "Feminino",
-      isSale: true,
-    },
-    {
-      id: 2,
-      name: "Blazer Feminino Moderno",
-      price: 459.90,
-      image: productBlazer,
-      category: "Feminino",
-      isNew: true,
-    },
-    {
-      id: 3,
-      name: "Bolsa de Couro Premium",
-      price: 599.90,
-      originalPrice: 799.90,
-      image: productBag,
-      category: "Acessórios",
-      isSale: true,
-    },
-    {
-      id: 4,
-      name: "Vestido Casual Elegante",
-      price: 299.90,
-      image: productDress,
-      category: "Feminino",
-    },
-    {
-      id: 5,
-      name: "Blazer Executivo",
-      price: 459.90,
-      image: productBlazer,
-      category: "Feminino",
-    },
-    {
-      id: 6,
-      name: "Bolsa Executiva Premium",
-      price: 599.90,
-      image: productBag,
-      category: "Acessórios",
-    },
-  ];
-
   // Carregar produtos do localStorage
   useEffect(() => {
-    let allProducts = [...defaultProducts]; // Sempre incluir produtos padrão
-    
     const savedProducts = localStorage.getItem('adminProducts');
     if (savedProducts) {
       const adminProducts = JSON.parse(savedProducts);
-      // Filtrar apenas produtos em estoque do admin
-      const availableAdminProducts = adminProducts.filter((product: Product) => product.inStock !== false);
-      
-      // Adicionar produtos do admin aos produtos padrão
-      allProducts = [...availableAdminProducts, ...defaultProducts];
+      // Filtrar apenas produtos em estoque
+      const availableProducts = adminProducts.filter((product: Product) => product.inStock !== false);
+      setProducts(availableProducts);
+    } else {
+      setProducts([]);
     }
-    
-    setProducts(allProducts);
   }, []);
 
   return (
@@ -114,6 +55,18 @@ const ProductGrid = () => {
             <ProductCard key={product.id} {...product} />
           ))}
         </div>
+
+        {/* No Products Message */}
+        {(!isSearchActive || !searchTerm) && products.length === 0 && (
+          <div className="text-center mt-12">
+            <p className="text-lg text-muted-foreground mb-4">
+              Nenhum produto cadastrado ainda
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Os produtos cadastrados no painel do admin aparecerão aqui.
+            </p>
+          </div>
+        )}
 
         {/* No Results Message */}
         {isSearchActive && searchTerm && searchProducts(products, searchTerm).length === 0 && (

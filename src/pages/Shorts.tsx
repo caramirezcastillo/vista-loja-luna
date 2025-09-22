@@ -166,75 +166,19 @@ const ShortsProductCard = ({ product }: { product: Product }) => {
 const Shorts = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
-  // Produtos padrão de shorts
-  const defaultShortsProducts: Product[] = [
-    {
-      id: 'short-1',
-      name: "Short Jeans Clássico",
-      price: 89.90,
-      originalPrice: 119.90,
-      image: "/src/assets/product-blazer.jpg",
-      category: "Shorts",
-      onSale: true,
-      rating: 4
-    },
-    {
-      id: 'short-2',
-      name: "Short Alfaiataria Elegante",
-      price: 129.90,
-      image: "/src/assets/product-blazer.jpg",
-      category: "Shorts",
-      isNew: true,
-      rating: 5
-    },
-    {
-      id: 'short-3',
-      name: "Short Esportivo Confortável",
-      price: 69.90,
-      image: "/src/assets/product-blazer.jpg",
-      category: "Shorts",
-      rating: 4
-    },
-    {
-      id: 'short-4',
-      name: "Short Linho Verão",
-      price: 99.90,
-      originalPrice: 139.90,
-      image: "/src/assets/product-blazer.jpg",
-      category: "Shorts",
-      onSale: true,
-      rating: 5
-    },
-    {
-      id: 'short-5',
-      name: "Short Ciclista Moderno",
-      price: 79.90,
-      image: "/src/assets/product-blazer.jpg",
-      category: "Shorts",
-      isNew: true,
-      rating: 4
-    }
-  ];
-
   useEffect(() => {
-    // Sempre começar com produtos padrão de shorts
-    let allProducts = [...defaultShortsProducts];
-    
     // Carregar produtos do localStorage e filtrar apenas shorts
     const savedProducts = localStorage.getItem('adminProducts');
+    let filteredProducts = [];
+
     if (savedProducts) {
       const adminProducts = JSON.parse(savedProducts);
-      const shortsFromAdmin = adminProducts.filter((product: Product) => 
+      filteredProducts = adminProducts.filter((product: Product) => 
         product.category.toLowerCase().includes('short') && product.inStock !== false
       );
-      
-      // Adicionar shorts do admin aos produtos padrão
-      if (shortsFromAdmin.length > 0) {
-        allProducts = [...shortsFromAdmin, ...defaultShortsProducts];
-      }
     }
 
-    setProducts(allProducts);
+    setProducts(filteredProducts);
   }, []);
 
   return (
@@ -279,6 +223,18 @@ const Shorts = () => {
             <ShortsProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {/* No Products Message */}
+        {products.length === 0 && (
+          <div className="text-center mt-12">
+            <p className="text-lg text-gray-600 mb-4">
+              Nenhum short cadastrado ainda
+            </p>
+            <p className="text-sm text-gray-500">
+              Os shorts cadastrados no painel do admin aparecerão aqui.
+            </p>
+          </div>
+        )}
       </div>
       
       <Footer />
