@@ -129,14 +129,6 @@ const ProductGrid = () => {
           </div>
         )}
 
-        {/* Load More Button - Only show when not searching */}
-        {(!isSearchActive || !searchTerm) && (
-          <div className="text-center mt-12">
-            <button className="bg-fashion-black text-white px-8 py-3 rounded-lg hover:bg-fashion-black/90 transition-colors duration-300 font-semibold">
-              Ver Mais Produtos
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );

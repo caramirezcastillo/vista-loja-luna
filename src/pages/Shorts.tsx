@@ -60,7 +60,7 @@ const ShortsProductCard = ({ product }: { product: Product }) => {
 
   const handleAddToCart = () => {
     addItem({
-      id: product.id,
+      id: Number(product.id),
       name: product.name,
       price: product.price,
       image: product.image,

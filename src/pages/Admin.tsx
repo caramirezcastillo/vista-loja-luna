@@ -297,7 +297,8 @@ const Admin: React.FC = () => {
         image: '',
         category: 'feminino',
         description: '',
-        inStock: true
+        inStock: true,
+        stockQuantity: 0
       });
       setImageInputType('url');
     } catch (error) {
