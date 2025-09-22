@@ -66,6 +66,29 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   ]);
 
   const addItem = (newItem: Omit<CartItem, 'quantity'>) => {
+    // Verificar estoque antes de adicionar
+    const savedProducts = localStorage.getItem('adminProducts');
+    let products = [];
+    if (savedProducts) {
+      products = JSON.parse(savedProducts);
+    }
+    
+    const product = products.find((p: any) => p.id === newItem.id.toString());
+    if (product && product.stockQuantity !== undefined) {
+      if (product.stockQuantity <= 0) {
+        // Produto fora de estoque
+        return;
+      }
+      
+      // Decrementar estoque
+      const updatedProducts = products.map((p: any) => 
+        p.id === newItem.id.toString() 
+          ? { ...p, stockQuantity: Math.max(0, p.stockQuantity - 1), inStock: p.stockQuantity - 1 > 0 }
+          : p
+      );
+      localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+    }
+    
     setItems(currentItems => {
       const existingItem = currentItems.find(item => 
         item.id === newItem.id && 

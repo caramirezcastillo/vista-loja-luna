@@ -15,6 +15,7 @@ interface Product {
   category: string;
   description?: string;
   inStock?: boolean;
+  stockQuantity?: number;
   isSale?: boolean;
   isNew?: boolean;
 }

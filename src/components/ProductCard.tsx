@@ -15,6 +15,8 @@ interface ProductCardProps {
   category: string;
   isNew?: boolean;
   isSale?: boolean;
+  stockQuantity?: number;
+  inStock?: boolean;
 }
 
 const ProductCard = ({ 
@@ -25,7 +27,9 @@ const ProductCard = ({
   image, 
   category, 
   isNew = false, 
-  isSale = false 
+  isSale = false,
+  stockQuantity = 0,
+  inStock = true
 }: ProductCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const { addItem } = useCart();
@@ -111,12 +115,17 @@ const ProductCard = ({
           isHovered ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
         }`}>
           <Button 
-            className="w-full bg-fashion-black text-white hover:bg-fashion-black/90 transition-all duration-300"
+            className={`w-full transition-all duration-300 ${
+              !inStock || stockQuantity <= 0 
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                : 'bg-fashion-black text-white hover:bg-fashion-black/90'
+            }`}
             size="sm"
             onClick={handleAddToCart}
+            disabled={!inStock || stockQuantity <= 0}
           >
             <ShoppingBag className="h-4 w-4 mr-2" />
-            Adicionar ao Carrinho
+            {!inStock || stockQuantity <= 0 ? 'Fora de Estoque' : 'Adicionar ao Carrinho'}
           </Button>
         </div>
       </div>
@@ -138,6 +147,24 @@ const ProductCard = ({
               {formatPrice(originalPrice)}
             </span>
           )}
+        </div>
+        
+        {/* Stock Information */}
+        <div className="flex items-center justify-between">
+          <span className={`text-sm font-medium ${
+            !inStock || stockQuantity <= 0 
+              ? 'text-red-500' 
+              : stockQuantity <= 5 
+                ? 'text-orange-500' 
+                : 'text-green-600'
+          }`}>
+            {!inStock || stockQuantity <= 0 
+              ? 'Fora de estoque' 
+              : stockQuantity <= 5 
+                ? `Apenas ${stockQuantity} restantes` 
+                : `${stockQuantity} em estoque`
+            }
+          </span>
         </div>
       </div>
     </div>

@@ -12,6 +12,7 @@ interface Product {
   category: string;
   description: string;
   inStock: boolean;
+  stockQuantity: number;
 }
 
 interface SiteConfig {
@@ -77,7 +78,8 @@ const Admin: React.FC = () => {
     image: '',
     category: 'feminino',
     description: '',
-    inStock: true
+    inStock: true,
+    stockQuantity: 0
   });
   
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
@@ -122,7 +124,8 @@ const Admin: React.FC = () => {
         image: '/src/assets/product-dress.jpg',
         category: 'feminino',
         description: 'Vestido elegante perfeito para ocasiões especiais',
-        inStock: true
+        inStock: true,
+        stockQuantity: 10
       },
       {
         id: 'default-2',
@@ -131,7 +134,8 @@ const Admin: React.FC = () => {
         image: '/src/assets/product-blazer.jpg',
         category: 'feminino',
         description: 'Blazer moderno para um look executivo',
-        inStock: true
+        inStock: true,
+        stockQuantity: 15
       },
       {
         id: 'default-3',
@@ -140,7 +144,8 @@ const Admin: React.FC = () => {
         image: '/src/assets/product-bag.jpg',
         category: 'acessorios',
         description: 'Bolsa de couro premium com acabamento luxuoso',
-        inStock: true
+        inStock: true,
+        stockQuantity: 8
       },
       {
         id: 'default-4',
@@ -149,7 +154,8 @@ const Admin: React.FC = () => {
         image: '/src/assets/product-dress.jpg',
         category: 'feminino',
         description: 'Vestido casual para o dia a dia',
-        inStock: true
+        inStock: true,
+        stockQuantity: 12
       },
       {
         id: 'default-5',
@@ -158,7 +164,8 @@ const Admin: React.FC = () => {
         image: '/src/assets/product-blazer.jpg',
         category: 'feminino',
         description: 'Blazer executivo para reuniões importantes',
-        inStock: true
+        inStock: true,
+        stockQuantity: 7
       },
       {
         id: 'default-6',
@@ -167,7 +174,8 @@ const Admin: React.FC = () => {
         image: '/src/assets/product-bag.jpg',
         category: 'acessorios',
         description: 'Bolsa executiva para profissionais',
-        inStock: true
+        inStock: true,
+        stockQuantity: 5
       }
     ];
     
@@ -306,7 +314,8 @@ const Admin: React.FC = () => {
       image: product.image,
       category: product.category,
       description: product.description,
-      inStock: product.inStock
+      inStock: product.inStock,
+      stockQuantity: product.stockQuantity
     });
     setEditingProduct(product.id);
   };
@@ -649,6 +658,18 @@ const Admin: React.FC = () => {
                     <label className="ml-2 block text-sm text-gray-900">Em estoque</label>
                   </div>
                   
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Quantidade em Estoque</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={productForm.stockQuantity}
+                      onChange={(e) => setProductForm({...productForm, stockQuantity: parseInt(e.target.value) || 0})}
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
+                      required
+                    />
+                  </div>
+                  
                   <div className="flex space-x-4">
                     <button
                       type="submit"
@@ -669,7 +690,8 @@ const Admin: React.FC = () => {
                             image: '',
                             category: 'feminino',
                             description: '',
-                            inStock: true
+                            inStock: true,
+                            stockQuantity: 0
                           });
                           setImageInputType('url');
                         }}
@@ -695,6 +717,7 @@ const Admin: React.FC = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produto</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantidade</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                       </tr>
@@ -716,13 +739,16 @@ const Admin: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             R$ {product.price.toFixed(2)}
                           </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {product.stockQuantity || 0} unidades
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              product.inStock 
+                              product.inStock && (product.stockQuantity || 0) > 0
                                 ? 'bg-green-100 text-green-800' 
                                 : 'bg-red-100 text-red-800'
                             }`}>
-                              {product.inStock ? 'Em estoque' : 'Fora de estoque'}
+                              {product.inStock && (product.stockQuantity || 0) > 0 ? 'Em estoque' : 'Fora de estoque'}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">

@@ -20,6 +20,7 @@ interface Product {
   rating?: number;
   description?: string;
   inStock?: boolean;
+  stockQuantity?: number;
 }
 
 const VestidosProductCard = ({ product }: { product: Product }) => {
@@ -63,13 +64,13 @@ const VestidosProductCard = ({ product }: { product: Product }) => {
       name: product.name,
       price: product.price,
       image: product.image,
-      size: "M",
-      color: "Padrão",
-      quantity: 1
+      size: "M", // Default size
+      color: "Padrão" // Default color
     });
+    
     toast({
       title: "Produto adicionado!",
-      description: `${product.name} foi adicionado ao carrinho.`,
+      description: `${product.name} foi adicionado ao seu carrinho.`,
     });
   };
 

@@ -1,9 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, ShoppingBag, Star } from "lucide-react";
-import { useCart } from "@/contexts/CartContext";
-import { toast } from "@/hooks/use-toast";
+import ProductCard from "@/components/ProductCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -17,127 +15,15 @@ interface Product {
   isNew?: boolean;
   onSale?: boolean;
   rating?: number;
+  stockQuantity?: number;
+  inStock?: boolean;
 }
 
-const FemininoProductCard = ({ product }: { product: Product }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const { addItem } = useCart();
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(price);
-  };
-
-  const handleAddToCart = () => {
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      size: "M",
-      color: "Padrão",
-      quantity: 1
-    });
-    toast({
-      title: "Produto adicionado!",
-      description: `${product.name} foi adicionado ao carrinho.`,
-    });
-  };
-
-  return (
-    <div 
-      className="group relative bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="relative aspect-square overflow-hidden">
-        <img 
-          src={product.image} 
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        
-        {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {product.isNew && (
-            <Badge className="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1">
-              Novo
-            </Badge>
-          )}
-          {product.onSale && (
-            <Badge className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1">
-              Sale
-            </Badge>
-          )}
-        </div>
-
-        {/* Heart Icon */}
-        <button 
-          onClick={() => setIsLiked(!isLiked)}
-          className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white transition-colors duration-200"
-        >
-          <Heart 
-            className={`w-4 h-4 transition-colors duration-200 ${
-              isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'
-            }`} 
-          />
-        </button>
-
-        {/* Hover Actions */}
-        {isHovered && (
-          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-            <Button 
-              onClick={handleAddToCart}
-              className="bg-white text-black hover:bg-gray-100 font-medium px-6 py-2 rounded-full transform translate-y-2 group-hover:translate-y-0 transition-all duration-300"
-            >
-              <ShoppingBag className="w-4 h-4 mr-2" />
-              Adicionar ao Carrinho
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* Product Info */}
-      <div className="p-4">
-        <p className="text-sm text-gray-500 mb-1">{product.category}</p>
-        <h3 className="font-medium text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
-        
-        {/* Rating */}
-        {product.rating && (
-          <div className="flex items-center gap-1 mb-2">
-            {[...Array(5)].map((_, i) => (
-              <Star 
-                key={i} 
-                className={`w-3 h-3 ${
-                  i < product.rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
-                }`} 
-              />
-            ))}
-            <span className="text-xs text-gray-500 ml-1">({product.rating})</span>
-          </div>
-        )}
-        
-        {/* Price */}
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-lg text-gray-900">
-            {formatPrice(product.price)}
-          </span>
-          {product.originalPrice && (
-            <span className="text-sm text-gray-500 line-through">
-              {formatPrice(product.originalPrice)}
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const Feminino = () => {
-  const femininoProducts: Product[] = [
+  const [femininoProducts, setFemininoProducts] = useState<Product[]>([]);
+
+  // Produtos padrão
+  const defaultFemininoProducts: Product[] = [
     {
       id: 1,
       name: "Vestido Floral Elegante",
@@ -214,6 +100,26 @@ const Feminino = () => {
     }
   ];
 
+  // Carregar produtos do localStorage
+  useEffect(() => {
+    const savedProducts = localStorage.getItem('adminProducts');
+    let filteredProducts = defaultFemininoProducts;
+    
+    if (savedProducts) {
+      const adminProducts = JSON.parse(savedProducts);
+      // Filtrar produtos femininos do admin
+      const femininoFromAdmin = adminProducts.filter((product: Product) => 
+        product.category === 'feminino' && product.inStock !== false
+      );
+      
+      if (femininoFromAdmin.length > 0) {
+        filteredProducts = [...femininoFromAdmin, ...defaultFemininoProducts];
+      }
+    }
+
+    setFemininoProducts(filteredProducts);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -261,7 +167,19 @@ const Feminino = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {femininoProducts.map((product) => (
-            <FemininoProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              id={product.id}
+              name={product.name}
+              price={product.price}
+              originalPrice={product.originalPrice}
+              image={product.image}
+              category={product.category}
+              isNew={product.isNew}
+              isSale={product.onSale}
+              stockQuantity={product.stockQuantity || 0}
+              inStock={product.inStock !== false}
+            />
           ))}
         </div>
       </div>
