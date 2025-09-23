@@ -60,7 +60,7 @@ const VestidosProductCard = ({ product }: { product: Product }) => {
 
   const handleAddToCart = () => {
     addItem({
-      id: product.id,
+      id: Number(product.id),
       name: product.name,
       price: product.price,
       image: product.image,
@@ -166,80 +166,16 @@ const VestidosProductCard = ({ product }: { product: Product }) => {
 const Vestidos = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
-  // Produtos padrão de vestidos
-  const defaultVestidosProducts: Product[] = [
-    {
-      id: 'vestido-1',
-      name: "Vestido Floral Elegante",
-      price: 189.90,
-      originalPrice: 249.90,
-      image: "/src/assets/product-dress.jpg",
-      category: "Vestidos",
-      isNew: true,
-      onSale: true,
-      rating: 5
-    },
-    {
-      id: 'vestido-2',
-      name: "Vestido Midi Clássico",
-      price: 159.90,
-      image: "/src/assets/product-dress.jpg",
-      category: "Vestidos",
-      rating: 4
-    },
-    {
-      id: 'vestido-3',
-      name: "Vestido Longo Festa",
-      price: 299.90,
-      originalPrice: 399.90,
-      image: "/src/assets/product-dress.jpg",
-      category: "Vestidos",
-      onSale: true,
-      rating: 5
-    },
-    {
-      id: 'vestido-4',
-      name: "Vestido Casual Verão",
-      price: 129.90,
-      image: "/src/assets/product-dress.jpg",
-      category: "Vestidos",
-      isNew: true,
-      rating: 4
-    },
-    {
-      id: 'vestido-5',
-      name: "Vestido Social Executivo",
-      price: 219.90,
-      image: "/src/assets/product-dress.jpg",
-      category: "Vestidos",
-      rating: 5
-    },
-    {
-      id: 'vestido-6',
-      name: "Vestido Estampado Boho",
-      price: 179.90,
-      originalPrice: 229.90,
-      image: "/src/assets/product-dress.jpg",
-      category: "Vestidos",
-      onSale: true,
-      rating: 4
-    }
-  ];
-
   useEffect(() => {
     // Carregar produtos do localStorage e filtrar apenas vestidos
     const savedProducts = localStorage.getItem('adminProducts');
-    let filteredProducts = defaultVestidosProducts;
+    let filteredProducts = [];
 
     if (savedProducts) {
       const adminProducts = JSON.parse(savedProducts);
-      const vestidosFromAdmin = adminProducts.filter((product: Product) => 
+      filteredProducts = adminProducts.filter((product: Product) => 
         product.category.toLowerCase().includes('vestido') && product.inStock !== false
       );
-      
-      if (vestidosFromAdmin.length > 0) {
-        filteredProducts = [...vestidosFromAdmin, ...defaultVestidosProducts];
-      }
     }
 
     setProducts(filteredProducts);
@@ -287,6 +223,18 @@ const Vestidos = () => {
             <VestidosProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {/* No Products Message */}
+        {products.length === 0 && (
+          <div className="text-center mt-12">
+            <p className="text-lg text-gray-600 mb-4">
+              Nenhum vestido cadastrado ainda
+            </p>
+            <p className="text-sm text-gray-500">
+              Os vestidos cadastrados no painel do admin aparecerão aqui.
+            </p>
+          </div>
+        )}
       </div>
       
       <Footer />

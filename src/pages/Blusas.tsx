@@ -60,7 +60,7 @@ const BlusasProductCard = ({ product }: { product: Product }) => {
 
   const handleAddToCart = () => {
     addItem({
-      id: product.id,
+      id: Number(product.id),
       name: product.name,
       price: product.price,
       image: product.image,
@@ -166,62 +166,16 @@ const BlusasProductCard = ({ product }: { product: Product }) => {
 const Blusas = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
-  // Produtos padrão de blusas
-  const defaultBlusasProducts: Product[] = [
-    {
-      id: 'blusa-1',
-      name: "Blusa Feminina Casual",
-      price: 79.90,
-      image: "/src/assets/product-shirt.jpg",
-      category: "Blusas",
-      isNew: false,
-      rating: 4
-    },
-    {
-      id: 'blusa-2',
-      name: "Blusa Social Elegante",
-      price: 129.90,
-      originalPrice: 159.90,
-      image: "/src/assets/product-shirt.jpg",
-      category: "Blusas",
-      onSale: true,
-      rating: 5
-    },
-    {
-      id: 'blusa-3',
-      name: "Blusa Estampada Moderna",
-      price: 89.90,
-      image: "/src/assets/product-shirt.jpg",
-      category: "Blusas",
-      isNew: true,
-      rating: 4
-    },
-    {
-      id: 'blusa-4',
-      name: "Blusa de Seda Premium",
-      price: 199.90,
-      originalPrice: 249.90,
-      image: "/src/assets/product-shirt.jpg",
-      category: "Blusas",
-      onSale: true,
-      rating: 5
-    }
-  ];
-
   useEffect(() => {
     // Carregar produtos do localStorage e filtrar apenas blusas
     const savedProducts = localStorage.getItem('adminProducts');
-    let filteredProducts = defaultBlusasProducts;
+    let filteredProducts = [];
 
     if (savedProducts) {
       const adminProducts = JSON.parse(savedProducts);
-      const blusasFromAdmin = adminProducts.filter((product: Product) => 
+      filteredProducts = adminProducts.filter((product: Product) => 
         product.category.toLowerCase().includes('blusa') && product.inStock !== false
       );
-      
-      if (blusasFromAdmin.length > 0) {
-        filteredProducts = [...blusasFromAdmin, ...defaultBlusasProducts];
-      }
     }
 
     setProducts(filteredProducts);
@@ -269,6 +223,18 @@ const Blusas = () => {
             <BlusasProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {/* No Products Message */}
+        {products.length === 0 && (
+          <div className="text-center mt-12">
+            <p className="text-lg text-gray-600 mb-4">
+              Nenhuma blusa cadastrada ainda
+            </p>
+            <p className="text-sm text-gray-500">
+              As blusas cadastradas no painel do admin aparecerão aqui.
+            </p>
+          </div>
+        )}
       </div>
       
       <Footer />

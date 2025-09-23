@@ -7,7 +7,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { toast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
-  id: number;
+  id: string | number;
   name: string;
   price: number;
   originalPrice?: number;
@@ -35,12 +35,12 @@ const ProductCard = ({
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   
-  const productData = { id, name, price, originalPrice, image, category, isNew, isSale };
-  const isProductFavorite = isFavorite(id);
+  const productData = { id: Number(id), name, price, originalPrice, image, category, isNew, isSale };
+  const isProductFavorite = isFavorite(Number(id));
 
   const handleAddToCart = () => {
     addItem({
-      id,
+      id: Number(id),
       name,
       price,
       image,

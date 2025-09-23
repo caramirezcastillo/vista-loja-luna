@@ -153,6 +153,18 @@ const ProductGrid = () => {
           ))}
         </div>
 
+        {/* No Products Message */}
+        {(!isSearchActive || !searchTerm) && products.length === 0 && (
+          <div className="text-center mt-12">
+            <p className="text-lg text-muted-foreground mb-4">
+              Nenhum produto cadastrado ainda
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Os produtos cadastrados no painel do admin aparecerão aqui.
+            </p>
+          </div>
+        )}
+
         {/* No Results Message */}
         {isSearchActive && searchTerm && searchProducts(products, searchTerm).length === 0 && (
           <div className="text-center mt-12">
@@ -165,14 +177,6 @@ const ProductGrid = () => {
           </div>
         )}
 
-        {/* Load More Button - Only show when not searching */}
-        {(!isSearchActive || !searchTerm) && (
-          <div className="text-center mt-12">
-            <button className="bg-fashion-black text-white px-8 py-3 rounded-lg hover:bg-fashion-black/90 transition-colors duration-300 font-semibold">
-              Ver Mais Produtos
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );

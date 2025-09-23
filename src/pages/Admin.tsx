@@ -78,7 +78,7 @@ const Admin: React.FC = () => {
     name: '',
     price: 0,
     image: '',
-    category: 'feminino',
+    category: 'blusas',
     description: '',
     inStock: true,
     stockQuantity: 0
@@ -428,9 +428,10 @@ const Admin: React.FC = () => {
         name: '',
         price: 0,
         image: '',
-        category: 'feminino',
+        category: 'blusas',
         description: '',
-        inStock: true
+        inStock: true,
+        stockQuantity: 0
       });
       setImageInputType('url');
     } catch (error) {
@@ -777,9 +778,9 @@ const Admin: React.FC = () => {
                         onChange={(e) => setProductForm({...productForm, category: e.target.value})}
                         className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
                       >
-                        <option value="feminino">Feminino</option>
-                        <option value="masculino">Masculino</option>
-                        <option value="infantil">Infantil</option>
+                        <option value="blusas">Blusas</option>
+                        <option value="vestidos">Vestidos</option>
+                        <option value="shorts">Shorts</option>
                         <option value="acessorios">Acessórios</option>
                       </select>
                     </div>
