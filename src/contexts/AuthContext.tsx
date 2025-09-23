@@ -155,7 +155,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
-      // Primeiro, tentar registrar no Supabase
+      console.log('🔄 Iniciando processo de registro...');
+      
+      // Verificar se usuário já existe no localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const existingUser = users.find((u: any) => u.email === email);
+      
+      if (existingUser) {
+        console.log('❌ Usuário já existe no localStorage');
+        return false; // Usuário já existe
+      }
+      
+      // Tentar registrar no Supabase Auth primeiro
+      console.log('🔐 Tentando registrar no Supabase Auth...');
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -166,9 +178,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       });
 
+      let userId = Date.now().toString(); // ID padrão
+      
       if (data.user && !error) {
-        // Criar perfil do usuário na tabela users usando o service_role
+        console.log('✅ Usuário registrado no Supabase Auth com sucesso!');
+        userId = data.user.id;
+        
+        // Tentar criar perfil na tabela users (pode falhar devido ao RLS)
         try {
+          console.log('👤 Tentando criar perfil na tabela users...');
           const { error: profileError } = await supabase
             .from('users')
             .insert({
@@ -179,35 +197,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             });
 
           if (!profileError) {
-            // Fazer login automático após registro
-            const userWithoutPassword = {
-              id: data.user.id,
-              name: name,
-              email: email,
-              isAdmin: false
-            };
-            setUser(userWithoutPassword);
-            localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-            return true;
+            console.log('✅ Perfil criado no Supabase com sucesso!');
           } else {
-            console.error('Erro ao criar perfil:', profileError);
+            console.log('⚠️ Erro ao criar perfil no Supabase (usando localStorage como fallback):', profileError.message);
           }
         } catch (profileError) {
-          console.error('Erro ao criar perfil no Supabase:', profileError);
+          console.log('⚠️ Erro ao criar perfil no Supabase (usando localStorage como fallback):', profileError);
         }
-      }
-
-      // Fallback para localStorage se Supabase falhar
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const existingUser = users.find((u: any) => u.email === email);
-      
-      if (existingUser) {
-        return false; // Usuário já existe
+      } else {
+        console.log('⚠️ Erro no registro do Supabase Auth (usando localStorage):', error?.message);
       }
       
-      // Criar novo usuário
+      // Sempre salvar no localStorage como backup
+      console.log('💾 Salvando usuário no localStorage...');
       const newUser = {
-        id: Date.now().toString(),
+        id: userId,
         name,
         email,
         password,
@@ -227,9 +231,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(userWithoutPassword);
       localStorage.setItem('user', JSON.stringify(userWithoutPassword));
       
+      console.log('✅ Registro concluído com sucesso!');
       return true;
     } catch (error) {
-      console.error('Erro no registro:', error);
+      console.error('💥 Erro no registro:', error);
       return false;
     }
   };
