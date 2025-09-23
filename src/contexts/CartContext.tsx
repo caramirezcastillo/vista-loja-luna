@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '../integrations/supabase/client';
 
 export interface CartItem {
   id: number;
@@ -65,28 +66,79 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }
   ]);
 
-  const addItem = (newItem: Omit<CartItem, 'quantity'>) => {
-    // Verificar estoque antes de adicionar
-    const savedProducts = localStorage.getItem('adminProducts');
-    let products = [];
-    if (savedProducts) {
-      products = JSON.parse(savedProducts);
-    }
-    
-    const product = products.find((p: any) => p.id === newItem.id.toString());
-    if (product && product.stockQuantity !== undefined) {
-      if (product.stockQuantity <= 0) {
-        // Produto fora de estoque
-        return;
+  const addItem = async (newItem: Omit<CartItem, 'quantity'>) => {
+    // Verificar estoque no Supabase primeiro, depois localStorage como fallback
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('stock_quantity, in_stock')
+        .eq('id', newItem.id.toString())
+        .single();
+
+      if (!error && data) {
+        if (!data.in_stock || data.stock_quantity <= 0) {
+          // Produto fora de estoque no Supabase
+          return;
+        }
+        
+        // Decrementar estoque no Supabase
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({ 
+            stock_quantity: Math.max(0, data.stock_quantity - 1),
+            in_stock: data.stock_quantity - 1 > 0
+          })
+          .eq('id', newItem.id.toString());
+
+        if (updateError) {
+          console.error('Erro ao atualizar estoque no Supabase:', updateError);
+        }
+      } else {
+        // Fallback para localStorage se não encontrar no Supabase
+        const savedProducts = localStorage.getItem('adminProducts');
+        let products = [];
+        if (savedProducts) {
+          products = JSON.parse(savedProducts);
+        }
+        
+        const product = products.find((p: any) => p.id === newItem.id.toString());
+        if (product && product.stockQuantity !== undefined) {
+          if (product.stockQuantity <= 0) {
+            // Produto fora de estoque
+            return;
+          }
+          
+          // Decrementar estoque
+          const updatedProducts = products.map((p: any) => 
+            p.id === newItem.id.toString() 
+              ? { ...p, stockQuantity: Math.max(0, p.stockQuantity - 1), inStock: p.stockQuantity - 1 > 0 }
+              : p
+          );
+          localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao verificar estoque:', error);
+      // Fallback para localStorage em caso de erro
+      const savedProducts = localStorage.getItem('adminProducts');
+      let products = [];
+      if (savedProducts) {
+        products = JSON.parse(savedProducts);
       }
       
-      // Decrementar estoque
-      const updatedProducts = products.map((p: any) => 
-        p.id === newItem.id.toString() 
-          ? { ...p, stockQuantity: Math.max(0, p.stockQuantity - 1), inStock: p.stockQuantity - 1 > 0 }
-          : p
-      );
-      localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+      const product = products.find((p: any) => p.id === newItem.id.toString());
+      if (product && product.stockQuantity !== undefined) {
+        if (product.stockQuantity <= 0) {
+          return;
+        }
+        
+        const updatedProducts = products.map((p: any) => 
+          p.id === newItem.id.toString() 
+            ? { ...p, stockQuantity: Math.max(0, p.stockQuantity - 1), inStock: p.stockQuantity - 1 > 0 }
+            : p
+        );
+        localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+      }
     }
     
     setItems(currentItems => {

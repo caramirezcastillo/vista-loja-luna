@@ -3,6 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { supabase } from '../integrations/supabase/client';
+import type { Database } from '../integrations/supabase/types';
 
 interface Product {
   id: string;
@@ -106,188 +108,319 @@ const Admin: React.FC = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // Carregar dados do localStorage
-  useEffect(() => {
-    // Carregar produtos existentes
-    const savedProducts = localStorage.getItem('adminProducts');
-    let currentProducts = [];
-    if (savedProducts) {
-      currentProducts = JSON.parse(savedProducts);
-    }
-    
-    // Produtos padrão da página inicial para sincronizar
-    const defaultProducts = [
-      {
-        id: 'default-1',
-        name: 'Vestido Elegante Preto',
-        price: 299.90,
-        image: '/src/assets/product-dress.jpg',
-        category: 'feminino',
-        description: 'Vestido elegante perfeito para ocasiões especiais',
-        inStock: true,
-        stockQuantity: 10
-      },
-      {
-        id: 'default-2',
-        name: 'Blazer Feminino Moderno',
-        price: 459.90,
-        image: '/src/assets/product-blazer.jpg',
-        category: 'feminino',
-        description: 'Blazer moderno para um look executivo',
-        inStock: true,
-        stockQuantity: 15
-      },
-      {
-        id: 'default-3',
-        name: 'Bolsa de Couro Premium',
-        price: 599.90,
-        image: '/src/assets/product-bag.jpg',
-        category: 'acessorios',
-        description: 'Bolsa de couro premium com acabamento luxuoso',
-        inStock: true,
-        stockQuantity: 8
-      },
-      {
-        id: 'default-4',
-        name: 'Vestido Casual Elegante',
-        price: 299.90,
-        image: '/src/assets/product-dress.jpg',
-        category: 'feminino',
-        description: 'Vestido casual para o dia a dia',
-        inStock: true,
-        stockQuantity: 12
-      },
-      {
-        id: 'default-5',
-        name: 'Blazer Executivo',
-        price: 459.90,
-        image: '/src/assets/product-blazer.jpg',
-        category: 'feminino',
-        description: 'Blazer executivo para reuniões importantes',
-        inStock: true,
-        stockQuantity: 7
-      },
-      {
-        id: 'default-6',
-        name: 'Bolsa Executiva Premium',
-        price: 599.90,
-        image: '/src/assets/product-bag.jpg',
-        category: 'acessorios',
-        description: 'Bolsa executiva para profissionais',
-        inStock: true,
-        stockQuantity: 5
+  // Funções para carregar dados do Supabase
+  const loadProductsFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        const supabaseProducts = data.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          image: p.image,
+          category: p.category,
+          description: p.description,
+          inStock: p.in_stock,
+          stockQuantity: p.stock_quantity
+        }));
+        setProducts(supabaseProducts);
+        return true;
       }
-    ];
-    
-    // Verificar se produtos padrão já existem, se não, adicionar
-    const existingIds = currentProducts.map((p: Product) => p.id);
-    const newDefaultProducts = defaultProducts.filter(dp => !existingIds.includes(dp.id));
-    
-    if (newDefaultProducts.length > 0) {
-      const updatedProducts = [...currentProducts, ...newDefaultProducts];
-      setProducts(updatedProducts);
-      localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
-    } else {
-      setProducts(currentProducts);
+    } catch (error) {
+      console.error('Erro ao carregar produtos do Supabase:', error);
     }
-    
-    // Carregar configurações
-    const savedConfig = localStorage.getItem('siteConfig');
-    if (savedConfig) {
-      setSiteConfig(JSON.parse(savedConfig));
+    return false;
+  };
+
+  const loadUsersFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        const supabaseUsers = data.map((u: any) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          phone: u.phone || '',
+          createdAt: u.created_at
+        }));
+        setUsers(supabaseUsers);
+        return true;
+      }
+    } catch (error) {
+      console.error('Erro ao carregar usuários do Supabase:', error);
     }
-    
-    // Carregar pedidos
-    const savedOrders = localStorage.getItem('adminOrders');
-    if (savedOrders) {
-      setOrders(JSON.parse(savedOrders));
-    } else {
-      // Pedidos de exemplo
-      const exampleOrders: Order[] = [
-        {
-          id: 'order-1',
-          customerName: 'Maria Silva',
-          customerEmail: 'maria@email.com',
-          customerPhone: '(11) 99999-9999',
-          items: [
-            {
-              productId: 'default-1',
-              productName: 'Vestido Elegante Preto',
-              quantity: 1,
-              price: 299.90
-            }
-          ],
-          total: 299.90,
-          status: 'pending',
-          createdAt: new Date().toISOString(),
-          shippingAddress: 'Rua das Flores, 123 - São Paulo, SP'
-        },
-        {
-          id: 'order-2',
-          customerName: 'Ana Costa',
-          customerEmail: 'ana@email.com',
-          customerPhone: '(11) 88888-8888',
-          items: [
-            {
-              productId: 'default-2',
-              productName: 'Blazer Feminino Moderno',
-              quantity: 1,
-              price: 459.90
-            },
-            {
-              productId: 'default-3',
-              productName: 'Bolsa de Couro Premium',
-              quantity: 1,
-              price: 599.90
-            }
-          ],
-          total: 1059.80,
-          status: 'processing',
-          createdAt: new Date(Date.now() - 86400000).toISOString(),
-          shippingAddress: 'Av. Paulista, 456 - São Paulo, SP'
+    return false;
+  };
+
+  // Carregar dados do Supabase ou localStorage como fallback
+  useEffect(() => {
+    const loadData = async () => {
+      // Tentar carregar produtos do Supabase primeiro
+      const productsLoaded = await loadProductsFromSupabase();
+      
+      if (!productsLoaded) {
+        // Fallback para localStorage
+        const savedProducts = localStorage.getItem('adminProducts');
+        let currentProducts = [];
+        if (savedProducts) {
+          currentProducts = JSON.parse(savedProducts);
         }
-      ];
-      setOrders(exampleOrders);
-      localStorage.setItem('adminOrders', JSON.stringify(exampleOrders));
-    }
-    
-    // Carregar usuários
-    const savedUsers = localStorage.getItem('users');
-    if (savedUsers) {
-      const allUsers = JSON.parse(savedUsers);
-      // Adicionar data de criação se não existir
-      const usersWithDate = allUsers.map((u: any) => ({
-        ...u,
-        createdAt: u.createdAt || new Date().toISOString()
-      }));
-      setUsers(usersWithDate);
-    }
+        
+        // Produtos padrão da página inicial para sincronizar
+        const defaultProducts = [
+          {
+            id: 'default-1',
+            name: 'Vestido Elegante Preto',
+            price: 299.90,
+            image: '/src/assets/product-dress.jpg',
+            category: 'feminino',
+            description: 'Vestido elegante perfeito para ocasiões especiais',
+            inStock: true,
+            stockQuantity: 10
+          },
+          {
+            id: 'default-2',
+            name: 'Blazer Feminino Moderno',
+            price: 459.90,
+            image: '/src/assets/product-blazer.jpg',
+            category: 'feminino',
+            description: 'Blazer moderno para um look executivo',
+            inStock: true,
+            stockQuantity: 15
+          },
+          {
+            id: 'default-3',
+            name: 'Bolsa de Couro Premium',
+            price: 599.90,
+            image: '/src/assets/product-bag.jpg',
+            category: 'acessorios',
+            description: 'Bolsa de couro premium com acabamento luxuoso',
+            inStock: true,
+            stockQuantity: 8
+          },
+          {
+            id: 'default-4',
+            name: 'Vestido Casual Elegante',
+            price: 299.90,
+            image: '/src/assets/product-dress.jpg',
+            category: 'feminino',
+            description: 'Vestido casual para o dia a dia',
+            inStock: true,
+            stockQuantity: 12
+          },
+          {
+            id: 'default-5',
+            name: 'Blazer Executivo',
+            price: 459.90,
+            image: '/src/assets/product-blazer.jpg',
+            category: 'feminino',
+            description: 'Blazer executivo para reuniões importantes',
+            inStock: true,
+            stockQuantity: 7
+          },
+          {
+            id: 'default-6',
+            name: 'Bolsa Executiva Premium',
+            price: 599.90,
+            image: '/src/assets/product-bag.jpg',
+            category: 'acessorios',
+            description: 'Bolsa executiva para profissionais',
+            inStock: true,
+            stockQuantity: 5
+          }
+        ];
+        
+        // Verificar se produtos padrão já existem, se não, adicionar
+        const existingIds = currentProducts.map((p: Product) => p.id);
+        const newDefaultProducts = defaultProducts.filter(dp => !existingIds.includes(dp.id));
+        
+        if (newDefaultProducts.length > 0) {
+          const updatedProducts = [...currentProducts, ...newDefaultProducts];
+          setProducts(updatedProducts);
+          localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+        } else {
+          setProducts(currentProducts);
+        }
+      }
+
+      // Tentar carregar usuários do Supabase primeiro
+      const usersLoaded = await loadUsersFromSupabase();
+      
+      if (!usersLoaded) {
+        // Fallback para localStorage
+        const savedUsers = localStorage.getItem('users');
+        if (savedUsers) {
+          const allUsers = JSON.parse(savedUsers);
+          // Adicionar data de criação se não existir
+          const usersWithDate = allUsers.map((u: any) => ({
+            ...u,
+            createdAt: u.createdAt || new Date().toISOString()
+          }));
+          setUsers(usersWithDate);
+        }
+      }
+
+      // Carregar configurações (ainda do localStorage)
+      const savedConfig = localStorage.getItem('siteConfig');
+      if (savedConfig) {
+        setSiteConfig(JSON.parse(savedConfig));
+      }
+      
+      // Carregar pedidos (ainda do localStorage por enquanto)
+      const savedOrders = localStorage.getItem('adminOrders');
+      if (savedOrders) {
+        setOrders(JSON.parse(savedOrders));
+      } else {
+        // Pedidos de exemplo
+        const exampleOrders: Order[] = [
+          {
+            id: 'order-1',
+            customerName: 'Maria Silva',
+            customerEmail: 'maria@email.com',
+            customerPhone: '(11) 99999-9999',
+            items: [
+              {
+                productId: 'default-1',
+                productName: 'Vestido Elegante Preto',
+                quantity: 1,
+                price: 299.90
+              }
+            ],
+            total: 299.90,
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+            shippingAddress: 'Rua das Flores, 123 - São Paulo, SP'
+          },
+          {
+            id: 'order-2',
+            customerName: 'Ana Costa',
+            customerEmail: 'ana@email.com',
+            customerPhone: '(11) 88888-8888',
+            items: [
+              {
+                productId: 'default-2',
+                productName: 'Blazer Feminino Moderno',
+                quantity: 1,
+                price: 459.90
+              },
+              {
+                productId: 'default-3',
+                productName: 'Bolsa de Couro Premium',
+                quantity: 1,
+                price: 599.90
+              }
+            ],
+            total: 1059.80,
+            status: 'processing',
+            createdAt: new Date(Date.now() - 86400000).toISOString(),
+            shippingAddress: 'Av. Paulista, 456 - São Paulo, SP'
+          }
+        ];
+        setOrders(exampleOrders);
+        localStorage.setItem('adminOrders', JSON.stringify(exampleOrders));
+      }
+    };
+
+    loadData();
   }, []);
 
-  const handleProductSubmit = (e: React.FormEvent) => {
+  const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       if (editingProduct) {
         // Editar produto existente
-        const updatedProducts = products.map(p => 
-          p.id === editingProduct 
-            ? { ...productForm, id: editingProduct }
-            : p
-        );
-        setProducts(updatedProducts);
-        localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+        try {
+          const { error } = await supabase
+            .from('products')
+            .update({
+              name: productForm.name,
+              price: productForm.price,
+              image: productForm.image,
+              category: productForm.category,
+              description: productForm.description,
+              in_stock: productForm.inStock,
+              stock_quantity: productForm.stockQuantity
+            })
+            .eq('id', editingProduct);
+
+          if (error) throw error;
+
+          // Atualizar estado local
+          const updatedProducts = products.map(p => 
+            p.id === editingProduct 
+              ? { ...productForm, id: editingProduct }
+              : p
+          );
+          setProducts(updatedProducts);
+        } catch (supabaseError) {
+          console.error('Erro ao atualizar no Supabase, usando localStorage:', supabaseError);
+          // Fallback para localStorage
+          const updatedProducts = products.map(p => 
+            p.id === editingProduct 
+              ? { ...productForm, id: editingProduct }
+              : p
+          );
+          setProducts(updatedProducts);
+          localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+        }
         setEditingProduct(null);
       } else {
         // Adicionar novo produto
-        const newProduct: Product = {
-          ...productForm,
-          id: Date.now().toString()
-        };
-        const updatedProducts = [...products, newProduct];
-        setProducts(updatedProducts);
-        localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+        try {
+          const { data, error } = await supabase
+            .from('products')
+            .insert({
+              name: productForm.name,
+              price: productForm.price,
+              image: productForm.image,
+              category: productForm.category,
+              description: productForm.description,
+              in_stock: productForm.inStock,
+              stock_quantity: productForm.stockQuantity
+            })
+            .select()
+            .single();
+
+          if (error) throw error;
+
+          // Atualizar estado local com o produto do Supabase
+          const newProduct: Product = {
+            id: data.id,
+            name: data.name,
+            price: data.price,
+            image: data.image,
+            category: data.category,
+            description: data.description,
+            inStock: data.in_stock,
+            stockQuantity: data.stock_quantity
+          };
+          const updatedProducts = [...products, newProduct];
+          setProducts(updatedProducts);
+        } catch (supabaseError) {
+          console.error('Erro ao salvar no Supabase, usando localStorage:', supabaseError);
+          // Fallback para localStorage
+          const newProduct: Product = {
+            ...productForm,
+            id: Date.now().toString()
+          };
+          const updatedProducts = [...products, newProduct];
+          setProducts(updatedProducts);
+          localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+        }
       }
       
       // Limpar formulário
@@ -320,11 +453,26 @@ const Admin: React.FC = () => {
     setEditingProduct(product.id);
   };
 
-  const handleDeleteProduct = (productId: string) => {
+  const handleDeleteProduct = async (productId: string) => {
     if (window.confirm('Tem certeza que deseja excluir este produto?')) {
-      const updatedProducts = products.filter(p => p.id !== productId);
-      setProducts(updatedProducts);
-      localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+      try {
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', productId);
+
+        if (error) throw error;
+
+        // Atualizar estado local
+        const updatedProducts = products.filter(p => p.id !== productId);
+        setProducts(updatedProducts);
+      } catch (supabaseError) {
+        console.error('Erro ao excluir no Supabase, usando localStorage:', supabaseError);
+        // Fallback para localStorage
+        const updatedProducts = products.filter(p => p.id !== productId);
+        setProducts(updatedProducts);
+        localStorage.setItem('adminProducts', JSON.stringify(updatedProducts));
+      }
     }
   };
 

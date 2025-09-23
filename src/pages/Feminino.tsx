@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import ProductCard from "@/components/ProductCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { supabase } from '../integrations/supabase/client';
 
 interface Product {
   id: number;
@@ -100,24 +101,62 @@ const Feminino = () => {
     }
   ];
 
-  // Carregar produtos do localStorage
+  // Carregar produtos do Supabase ou localStorage como fallback
   useEffect(() => {
-    const savedProducts = localStorage.getItem('adminProducts');
-    let filteredProducts = defaultFemininoProducts;
-    
-    if (savedProducts) {
-      const adminProducts = JSON.parse(savedProducts);
-      // Filtrar produtos femininos do admin
-      const femininoFromAdmin = adminProducts.filter((product: Product) => 
-        product.category === 'feminino' && product.inStock !== false
-      );
-      
-      if (femininoFromAdmin.length > 0) {
-        filteredProducts = [...femininoFromAdmin, ...defaultFemininoProducts];
-      }
-    }
+    const loadProducts = async () => {
+      try {
+        // Tentar carregar do Supabase primeiro
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('category', 'feminino')
+          .eq('in_stock', true)
+          .order('created_at', { ascending: false });
 
-    setFemininoProducts(filteredProducts);
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const supabaseProducts = data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            originalPrice: p.original_price,
+            image: p.image,
+            category: p.category,
+            description: p.description,
+            inStock: p.in_stock,
+            stockQuantity: p.stock_quantity,
+            onSale: p.original_price && p.original_price > p.price,
+            isNew: false,
+            rating: 5 // Valor padrão
+          }));
+          setFemininoProducts([...supabaseProducts, ...defaultFemininoProducts]);
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao carregar produtos femininos do Supabase:', error);
+      }
+
+      // Fallback para localStorage
+      const savedProducts = localStorage.getItem('adminProducts');
+      let filteredProducts = defaultFemininoProducts;
+      
+      if (savedProducts) {
+        const adminProducts = JSON.parse(savedProducts);
+        // Filtrar produtos femininos do admin
+        const femininoFromAdmin = adminProducts.filter((product: Product) => 
+          product.category === 'feminino' && product.inStock !== false
+        );
+        
+        if (femininoFromAdmin.length > 0) {
+          filteredProducts = [...femininoFromAdmin, ...defaultFemininoProducts];
+        }
+      }
+
+      setFemininoProducts(filteredProducts);
+    };
+
+    loadProducts();
   }, []);
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from "./ProductCard";
 import { useSearch } from "@/contexts/SearchContext";
+import { supabase } from '../integrations/supabase/client';
 import productDress from "@/assets/product-dress.jpg";
 import productShirt from "@/assets/product-shirt.jpg";
 import productBlazer from "@/assets/product-blazer.jpg";
@@ -75,23 +76,58 @@ const ProductGrid = () => {
     },
   ];
 
-  // Carregar produtos do localStorage
+  // Carregar produtos do Supabase ou localStorage como fallback
   useEffect(() => {
-    const savedProducts = localStorage.getItem('adminProducts');
-    if (savedProducts) {
-      const adminProducts = JSON.parse(savedProducts);
-      // Filtrar apenas produtos em estoque
-      const availableProducts = adminProducts.filter((product: Product) => product.inStock !== false);
-      
-      if (availableProducts.length > 0) {
-        // Combinar produtos do admin com produtos padrão
-        setProducts([...availableProducts, ...defaultProducts]);
+    const loadProducts = async () => {
+      try {
+        // Tentar carregar do Supabase primeiro
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          const supabaseProducts = data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            originalPrice: p.original_price,
+            image: p.image,
+            category: p.category,
+            description: p.description,
+            inStock: p.in_stock,
+            stockQuantity: p.stock_quantity,
+            isSale: p.original_price && p.original_price > p.price,
+            isNew: false // Pode ser calculado baseado na data de criação
+          }));
+          setProducts(supabaseProducts);
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao carregar produtos do Supabase:', error);
+      }
+
+      // Fallback para localStorage
+      const savedProducts = localStorage.getItem('adminProducts');
+      if (savedProducts) {
+        const adminProducts = JSON.parse(savedProducts);
+        // Filtrar apenas produtos em estoque
+        const availableProducts = adminProducts.filter((product: Product) => product.inStock !== false);
+        
+        if (availableProducts.length > 0) {
+          // Combinar produtos do admin com produtos padrão
+          setProducts([...availableProducts, ...defaultProducts]);
+        } else {
+          setProducts(defaultProducts);
+        }
       } else {
         setProducts(defaultProducts);
       }
-    } else {
-      setProducts(defaultProducts);
-    }
+    };
+
+    loadProducts();
   }, []);
 
   return (
