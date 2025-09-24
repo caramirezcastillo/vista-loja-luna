@@ -64,14 +64,14 @@ const Admin: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [siteConfig, setSiteConfig] = useState<SiteConfig>({
-    siteName: 'Moda Agora',
+    siteName: 'Vista Loja Luna',
     siteDescription: 'Sua loja de moda online',
-    contactEmail: 'contato@modaagora.com',
+    contactEmail: 'contato@vistalojluna.com',
     contactPhone: '(11) 99999-9999',
     socialMedia: {
-      facebook: 'https://facebook.com/modaagora',
-      instagram: 'https://instagram.com/modaagora',
-      twitter: 'https://twitter.com/modaagora'
+      facebook: 'https://facebook.com/vistalojluna',
+      instagram: 'https://instagram.com/vistalojluna',
+      twitter: 'https://twitter.com/vistalojluna'
     }
   });
   
@@ -87,7 +87,6 @@ const Admin: React.FC = () => {
   
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [imageInputType, setImageInputType] = useState<'url' | 'file'>('url');
   
   // Estados para gerenciamento de usuários
   const [userForm, setUserForm] = useState({
@@ -437,7 +436,6 @@ const Admin: React.FC = () => {
         inStock: true,
         stockQuantity: 0
       });
-      setImageInputType('url');
     } catch (error) {
       console.error('Erro ao salvar produto:', error);
     } finally {
@@ -687,91 +685,38 @@ const Admin: React.FC = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Imagem do Produto</label>
                       
-                      {/* Seletor de tipo de entrada */}
-                      <div className="flex space-x-4 mb-3">
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="imageInputType"
-                            value="url"
-                            checked={imageInputType === 'url'}
-                            onChange={(e) => setImageInputType(e.target.value as 'url' | 'file')}
-                            className="mr-2 text-pink-600 focus:ring-pink-500"
-                          />
-                          URL da Imagem
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="imageInputType"
-                            value="file"
-                            checked={imageInputType === 'file'}
-                            onChange={(e) => setImageInputType(e.target.value as 'url' | 'file')}
-                            className="mr-2 text-pink-600 focus:ring-pink-500"
-                          />
-                          Carregar do PC/Galeria
-                        </label>
-                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              const result = event.target?.result as string;
+                              setProductForm({...productForm, image: result});
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
+                        required={!productForm.image}
+                      />
                       
-                      {/* Campo de entrada baseado no tipo selecionado */}
-                      {imageInputType === 'url' ? (
-                        <input
-                          type="url"
-                          value={productForm.image}
-                          onChange={(e) => setProductForm({...productForm, image: e.target.value})}
-                          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
-                          placeholder="https://exemplo.com/imagem.jpg"
-                          required
-                        />
-                      ) : (
-                        <div>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (event) => {
-                                  const result = event.target?.result as string;
-                                  setProductForm({...productForm, image: result});
-                                };
-                                reader.readAsDataURL(file);
-                              }
-                            }}
-                            className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
-                            required={!productForm.image}
-                          />
-                          {productForm.image && (
-                            <div className="mt-2">
-                              <img 
-                                src={productForm.image} 
-                                alt="Preview" 
-                                className="h-20 w-20 object-cover rounded-md border border-gray-300"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setProductForm({...productForm, image: ''})}
-                                className="ml-2 text-sm text-red-600 hover:text-red-800"
-                              >
-                                Remover
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      
-                      {/* Preview da imagem para URL */}
-                      {imageInputType === 'url' && productForm.image && (
+                      {productForm.image && (
                         <div className="mt-2">
                           <img 
                             src={productForm.image} 
                             alt="Preview" 
                             className="h-20 w-20 object-cover rounded-md border border-gray-300"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
                           />
+                          <button
+                            type="button"
+                            onClick={() => setProductForm({...productForm, image: ''})}
+                            className="ml-2 text-sm text-red-600 hover:text-red-800"
+                          >
+                            Remover
+                          </button>
                         </div>
                       )}
                     </div>
