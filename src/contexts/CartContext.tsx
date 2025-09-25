@@ -73,10 +73,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         .from('products')
         .select('stock_quantity, in_stock')
         .eq('id', newItem.id.toString())
-        .single();
+        .maybeSingle();
 
       if (!error && data) {
-        if (!data.in_stock || data.stock_quantity <= 0) {
+        if (!data.in_stock || (data.stock_quantity || 0) <= 0) {
           // Produto fora de estoque no Supabase
           return;
         }
@@ -85,9 +85,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         const { error: updateError } = await supabase
           .from('products')
           .update({ 
-            stock_quantity: Math.max(0, data.stock_quantity - 1),
-            in_stock: data.stock_quantity - 1 > 0
-          })
+            stock_quantity: Math.max(0, (data.stock_quantity || 0) - 1),
+            in_stock: (data.stock_quantity || 0) - 1 > 0
+          } as any)
           .eq('id', newItem.id.toString());
 
         if (updateError) {

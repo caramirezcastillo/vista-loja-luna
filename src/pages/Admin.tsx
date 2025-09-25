@@ -51,6 +51,7 @@ interface AdminUser {
   name: string;
   email: string;
   password: string;
+  phone: string;
   isAdmin: boolean;
   createdAt: string;
   googleId?: string;
@@ -93,6 +94,7 @@ const Admin: React.FC = () => {
     name: '',
     email: '',
     password: '',
+    phone: '',
     isAdmin: false
   });
   const [editingUser, setEditingUser] = useState<string | null>(null);
@@ -152,7 +154,9 @@ const Admin: React.FC = () => {
           id: u.id,
           name: u.name,
           email: u.email,
+          password: '', // Não precisamos da senha para exibição
           phone: u.phone || '',
+          isAdmin: u.is_admin || false,
           createdAt: u.created_at
         }));
         setUsers(supabaseUsers);
@@ -430,7 +434,8 @@ const Admin: React.FC = () => {
         image: '',
         category: 'feminino',
         description: '',
-        inStock: true
+        inStock: true,
+        stockQuantity: 0
       });
       setImageInputType('url');
     } catch (error) {
@@ -540,6 +545,7 @@ const Admin: React.FC = () => {
         name: '',
         email: '',
         password: '',
+        phone: '',
         isAdmin: false
       });
       
@@ -1074,6 +1080,17 @@ const Admin: React.FC = () => {
                     </div>
                     
                     <div>
+                      <label className="block text-sm font-medium text-gray-700">Telefone</label>
+                      <input
+                        type="tel"
+                        value={userForm.phone}
+                        onChange={(e) => setUserForm({...userForm, phone: e.target.value})}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500"
+                        placeholder="(11) 99999-9999"
+                      />
+                    </div>
+                    
+                    <div>
                       <label className="block text-sm font-medium text-gray-700">Senha</label>
                       <div className="relative">
                         <input
@@ -1122,6 +1139,7 @@ const Admin: React.FC = () => {
                             name: '',
                             email: '',
                             password: '',
+                            phone: '',
                             isAdmin: false
                           });
                         }}

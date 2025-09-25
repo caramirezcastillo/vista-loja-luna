@@ -8,7 +8,7 @@ import productBlazer from "@/assets/product-blazer.jpg";
 import productBag from "@/assets/product-bag.jpg";
 
 interface Product {
-  id: string | number;
+  id: number;
   name: string;
   price: number;
   originalPrice?: number;
@@ -90,7 +90,7 @@ const ProductGrid = () => {
 
         if (data && data.length > 0) {
           const supabaseProducts = data.map((p: any) => ({
-            id: p.id,
+            id: Number(p.id),
             name: p.name,
             price: p.price,
             originalPrice: p.original_price,
@@ -113,12 +113,23 @@ const ProductGrid = () => {
       const savedProducts = localStorage.getItem('adminProducts');
       if (savedProducts) {
         const adminProducts = JSON.parse(savedProducts);
-        // Filtrar apenas produtos em estoque
-        const availableProducts = adminProducts.filter((product: Product) => product.inStock !== false);
+        // Filtrar apenas produtos em estoque e garantir que o id seja number
+        const availableProducts = adminProducts
+          .filter((product: any) => product.inStock !== false)
+          .map((product: any) => ({
+            ...product,
+            id: typeof product.id === 'string' ? parseInt(product.id, 10) : Number(product.id)
+          }))
+          .filter((product: Product) => !isNaN(product.id));
         
         if (availableProducts.length > 0) {
-          // Combinar produtos do admin com produtos padrão
-          setProducts([...availableProducts, ...defaultProducts]);
+          // Combinar produtos do admin com produtos padrão, ajustando IDs para evitar conflitos
+          const maxAdminId = Math.max(...availableProducts.map((p: Product) => p.id), 0);
+          const adjustedDefaultProducts = defaultProducts.map((product, index) => ({
+            ...product,
+            id: maxAdminId + index + 1
+          }));
+          setProducts([...availableProducts, ...adjustedDefaultProducts]);
         } else {
           setProducts(defaultProducts);
         }
@@ -148,7 +159,9 @@ const ProductGrid = () => {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {(isSearchActive && searchTerm ? searchProducts(products, searchTerm) : products).map((product) => (
+          {(isSearchActive && searchTerm ? searchProducts(products, searchTerm) : products)
+            .filter(product => product && typeof product.id === 'number' && !isNaN(product.id))
+            .map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}
         </div>

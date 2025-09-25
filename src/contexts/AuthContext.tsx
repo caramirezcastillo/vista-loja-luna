@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           .from('users')
           .select('*')
           .eq('id', data.user.id)
-          .single();
+          .maybeSingle();
 
         if (profile && !profileError) {
           const userWithoutPassword = {
@@ -194,7 +194,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               name: name,
               email: email,
               is_admin: false
-            });
+            } as any);
 
           if (!profileError) {
             console.log('✅ Perfil criado no Supabase com sucesso!');

@@ -43,7 +43,19 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
     if (savedFavorites) {
       try {
         const parsedFavorites = JSON.parse(savedFavorites);
-        setFavorites(parsedFavorites);
+        // Validar e filtrar produtos com IDs válidos
+        const validFavorites = parsedFavorites.filter((product: any) => 
+          product && 
+          typeof product.id === 'number' && 
+          !isNaN(product.id) && 
+          product.id > 0
+        );
+        setFavorites(validFavorites);
+        
+        // Se houve produtos inválidos, atualizar o localStorage
+        if (validFavorites.length !== parsedFavorites.length) {
+          localStorage.setItem('userFavorites', JSON.stringify(validFavorites));
+        }
       } catch (error) {
         console.error('Erro ao carregar favoritos:', error);
         localStorage.removeItem('userFavorites');
