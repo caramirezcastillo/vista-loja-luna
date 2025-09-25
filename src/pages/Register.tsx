@@ -71,12 +71,17 @@ const Register: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const success = await register(formData.name, formData.email, formData.password);
+      const result = await register(formData.name, formData.email, formData.password);
       
-      if (success) {
-        navigate('/');
+      if (result.success) {
+        if (result.error) {
+          // Sucesso mas com aviso (como verificação de email)
+          setErrors({ general: result.error });
+        } else {
+          navigate('/');
+        }
       } else {
-        setErrors({ email: 'Email já está em uso' });
+        setErrors({ general: result.error || 'Erro ao criar conta' });
       }
     } catch (error) {
       setErrors({ general: 'Erro ao criar conta. Tente novamente.' });

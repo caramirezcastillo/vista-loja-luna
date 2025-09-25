@@ -149,6 +149,7 @@ export type Database = {
           description: string | null
           id: string
           image: string | null
+          image2: string | null
           in_stock: boolean | null
           name: string
           price: number
@@ -161,6 +162,7 @@ export type Database = {
           description?: string | null
           id?: string
           image?: string | null
+          image2?: string | null
           in_stock?: boolean | null
           name: string
           price: number
@@ -173,10 +175,35 @@ export type Database = {
           description?: string | null
           id?: string
           image?: string | null
+          image2?: string | null
           in_stock?: boolean | null
           name?: string
           price?: number
           stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_admin: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          is_admin?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_admin?: boolean | null
+          name?: string
           updated_at?: string | null
         }
         Relationships: []

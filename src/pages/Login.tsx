@@ -61,12 +61,12 @@ const Login: React.FC = () => {
     setIsLoading(true);
     
     try {
-      const success = await login(formData.email, formData.password);
+      const result = await login(formData.email, formData.password);
       
-      if (success) {
+      if (result.success) {
         navigate(from, { replace: true });
       } else {
-        setErrors({ general: 'Email ou senha incorretos' });
+        setErrors({ general: result.error || 'Email ou senha incorretos' });
       }
     } catch (error) {
       setErrors({ general: 'Erro ao fazer login. Tente novamente.' });

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '../integrations/supabase/client';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 interface User {
   id: string;
@@ -10,12 +11,14 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  session: Session | null;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   loginWithGoogle: (googleUser: any) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,228 +37,174 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Verificar se há usuário logado no localStorage ao inicializar
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
-
-  const login = async (email: string, password: string): Promise<boolean> => {
+  // Função para buscar perfil do usuário
+  const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
-      // Primeiro, tentar autenticar no Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single();
 
-      if (data.user && !error) {
-        // Buscar perfil do usuário
-        const { data: profile, error: profileError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', data.user.id)
-          .maybeSingle();
+      if (error) {
+        console.error('❌ Erro ao buscar perfil:', error);
+        return null;
+      }
 
-        if (profile && !profileError) {
-          const userWithoutPassword = {
-            id: profile.id,
-            name: profile.name,
-            email: profile.email,
-            isAdmin: profile.is_admin || false
-          };
-          setUser(userWithoutPassword);
-          localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-          return true;
+      if (profile) {
+        const userData: User = {
+          id: profile.id,
+          name: profile.name,
+          email: supabaseUser.email || '',
+          isAdmin: profile.is_admin || false
+        };
+        return userData;
+      }
+    } catch (error) {
+      console.error('💥 Erro ao buscar perfil:', error);
+    }
+    return null;
+  };
+
+  // Configurar listener de autenticação do Supabase
+  useEffect(() => {    
+    // Configurar listener PRIMEIRO
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('🔐 Auth state changed:', event, session?.user?.email);
+        
+        setSession(session);
+        
+        if (session?.user) {
+          // Buscar dados do perfil do usuário com setTimeout para evitar deadlock
+          setTimeout(async () => {
+            const userData = await fetchUserProfile(session.user);
+            if (userData) {
+              setUser(userData);
+              localStorage.setItem('user', JSON.stringify(userData));
+            }
+            setLoading(false);
+          }, 0);
+        } else {
+          setUser(null);
+          localStorage.removeItem('user');
+          setLoading(false);
         }
       }
+    );
 
-      // Fallback para localStorage se Supabase falhar
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const foundUser = users.find((u: any) => u.email === email && u.password === password);
-      
-      if (foundUser) {
-        const userWithoutPassword = {
-          id: foundUser.id,
-          name: foundUser.name,
-          email: foundUser.email,
-          isAdmin: foundUser.isAdmin || false
-        };
-        setUser(userWithoutPassword);
-        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-        return true;
+    // DEPOIS verificar sessão existente
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        setLoading(false);
       }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      console.log('🔑 Tentando login com:', email);
       
-      // Verificar se é o admin padrão
-      if (email === 'admin@vistalojluna.com' && password === 'admin123') {
-        const adminUser = {
-          id: 'admin',
-          name: 'Administrador',
-          email: 'admin@vistalojluna.com',
-          isAdmin: true
-        };
-        setUser(adminUser);
-        localStorage.setItem('user', JSON.stringify(adminUser));
-        return true;
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('❌ Erro no login Supabase:', error);
+        return { success: false, error: error.message };
       }
-      
-      return false;
-    } catch (error) {
-      console.error('Erro no login:', error);
-      return false;
+
+      if (data.user) {
+        console.log('✅ Login bem-sucedido:', data.user.email);
+        return { success: true };
+      }
+
+      return { success: false, error: 'Falha na autenticação' };
+    } catch (error: any) {
+      console.error('💥 Erro no login:', error);
+      return { success: false, error: error.message };
     }
   };
 
-  const loginWithGoogle = async (googleUser: any): Promise<boolean> => {
+  const register = async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      // Extrair informações do usuário do Google
-      const profile = googleUser.getBasicProfile();
-      const googleUserData = {
-        id: `google_${profile.getId()}`,
-        name: profile.getName(),
-        email: profile.getEmail(),
-        isAdmin: false
-      };
+      console.log('📝 Registrando usuário:', email);
       
-      // Verificar se o usuário já existe no sistema
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      let existingUser = users.find((u: any) => u.email === googleUserData.email);
-      
-      if (!existingUser) {
-        // Criar novo usuário se não existir
-        const newUser = {
-          ...googleUserData,
-          password: '', // Usuários do Google não precisam de senha local
-          googleId: profile.getId()
-        };
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-        existingUser = newUser;
-      }
-      
-      // Fazer login
-      const userWithoutPassword = {
-        id: existingUser.id,
-        name: existingUser.name,
-        email: existingUser.email,
-        isAdmin: existingUser.isAdmin || false
-      };
-      
-      setUser(userWithoutPassword);
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-      
-      return true;
-    } catch (error) {
-      console.error('Erro no login com Google:', error);
-      return false;
-    }
-  };
-
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
-    try {
-      console.log('🔄 Iniciando processo de registro...');
-      
-      // Verificar se usuário já existe no localStorage
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const existingUser = users.find((u: any) => u.email === email);
-      
-      if (existingUser) {
-        console.log('❌ Usuário já existe no localStorage');
-        return false; // Usuário já existe
-      }
-      
-      // Tentar registrar no Supabase Auth primeiro
-      console.log('🔐 Tentando registrar no Supabase Auth...');
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             full_name: name
           }
         }
       });
 
-      let userId = Date.now().toString(); // ID padrão
-      
-      if (data.user && !error) {
-        console.log('✅ Usuário registrado no Supabase Auth com sucesso!');
-        userId = data.user.id;
-        
-        // Tentar criar perfil na tabela users (pode falhar devido ao RLS)
-        try {
-          console.log('👤 Tentando criar perfil na tabela users...');
-          const { error: profileError } = await supabase
-            .from('users')
-            .insert({
-              id: data.user.id,
-              name: name,
-              email: email,
-              is_admin: false
-            } as any);
-
-          if (!profileError) {
-            console.log('✅ Perfil criado no Supabase com sucesso!');
-          } else {
-            console.log('⚠️ Erro ao criar perfil no Supabase (usando localStorage como fallback):', profileError.message);
-          }
-        } catch (profileError) {
-          console.log('⚠️ Erro ao criar perfil no Supabase (usando localStorage como fallback):', profileError);
-        }
-      } else {
-        console.log('⚠️ Erro no registro do Supabase Auth (usando localStorage):', error?.message);
+      if (error) {
+        console.error('❌ Erro no registro Supabase:', error);
+        return { success: false, error: error.message };
       }
-      
-      // Sempre salvar no localStorage como backup
-      console.log('💾 Salvando usuário no localStorage...');
-      const newUser = {
-        id: userId,
-        name,
-        email,
-        password,
-        isAdmin: false
-      };
-      
-      users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
-      
-      // Fazer login automático após registro
-      const userWithoutPassword = {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        isAdmin: newUser.isAdmin
-      };
-      setUser(userWithoutPassword);
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-      
-      console.log('✅ Registro concluído com sucesso!');
-      return true;
-    } catch (error) {
+
+      if (data.user) {
+        console.log('✅ Usuário registrado:', data.user.email);
+        
+        if (data.user.email_confirmed_at) {
+          return { success: true };
+        } else {
+          return { 
+            success: true, 
+            error: 'Verifique seu email para confirmar o cadastro' 
+          };
+        }
+      }
+
+      return { success: false, error: 'Falha no registro' };
+    } catch (error: any) {
       console.error('💥 Erro no registro:', error);
-      return false;
+      return { success: false, error: error.message };
     }
   };
 
-  const logout = () => {
-    // Fazer logout do Supabase
-    supabase.auth.signOut();
-    
-    // Limpar estado local
-    setUser(null);
-    localStorage.removeItem('user');
+  const loginWithGoogle = async (googleUser: any): Promise<boolean> => {
+    // Implementar login com Google se necessário
+    console.log('Google login não implementado ainda');
+    return false;
   };
+
+  const logout = async (): Promise<void> => {
+    try {
+      console.log('👋 Fazendo logout...');
+      await supabase.auth.signOut();
+      // O onAuthStateChange vai lidar com a limpeza
+    } catch (error) {
+      console.error('Erro no logout:', error);
+      // Limpar manualmente em caso de erro
+      setUser(null);
+      setSession(null);
+      localStorage.removeItem('user');
+    }
+  };
+
+  const isAuthenticated = !!user && !!session;
+  const isAdmin = user?.isAdmin || false;
 
   const value: AuthContextType = {
     user,
+    session,
     login,
     loginWithGoogle,
     register,
     logout,
-    isAuthenticated: !!user,
-    isAdmin: user?.isAdmin || false
+    isAuthenticated,
+    isAdmin,
+    loading,
   };
 
   return (
