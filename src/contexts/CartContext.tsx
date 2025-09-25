@@ -9,6 +9,7 @@ export interface CartItem {
   quantity: number;
   size?: string;
   color?: string;
+  availableSizes?: string[];
 }
 
 interface CartContextType {
@@ -16,6 +17,7 @@ interface CartContextType {
   addItem: (item: Omit<CartItem, 'quantity'>) => void;
   removeItem: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
+  updateSize: (id: number, newSize: string) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -179,6 +181,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     );
   };
 
+  const updateSize = (id: number, newSize: string) => {
+    setItems(currentItems => 
+      currentItems.map(item => 
+        item.id === id ? { ...item, size: newSize } : item
+      )
+    );
+  };
+
   const clearCart = () => {
     setItems([]);
   };
@@ -196,6 +206,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     addItem,
     removeItem,
     updateQuantity,
+    updateSize,
     clearCart,
     getTotalItems,
     getTotalPrice

@@ -206,7 +206,7 @@ const Login: React.FC = () => {
             </div>
             
             <div className="mt-4 text-center text-sm text-gray-600">
-              <p>Admin: <strong>admin@modaagora.com</strong> / <strong>admin123</strong></p>
+              <p>Admin: <strong>admin@vistalojluna.com</strong> / <strong>admin123</strong></p>
             </div>
           </div>
         </div>

@@ -89,11 +89,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       
       // Verificar se é o admin padrão
-      if (email === 'admin@modaagora.com' && password === 'admin123') {
+      if (email === 'admin@vistalojluna.com' && password === 'admin123') {
         const adminUser = {
           id: 'admin',
           name: 'Administrador',
-          email: 'admin@modaagora.com',
+          email: 'admin@vistalojluna.com',
           isAdmin: true
         };
         setUser(adminUser);

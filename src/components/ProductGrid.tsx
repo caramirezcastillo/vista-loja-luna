@@ -19,6 +19,7 @@ interface Product {
   stockQuantity?: number;
   isSale?: boolean;
   isNew?: boolean;
+  sizes?: string[];
 }
 
 const ProductGrid = () => {
@@ -35,6 +36,7 @@ const ProductGrid = () => {
       image: productDress,
       category: "Feminino",
       isSale: true,
+      sizes: ['PP', 'P', 'M', 'G', 'GG']
     },
     {
       id: 2,
@@ -43,6 +45,7 @@ const ProductGrid = () => {
       image: productBlazer,
       category: "Feminino",
       isNew: true,
+      sizes: ['PP', 'P', 'M', 'G', 'GG']
     },
     {
       id: 3,
@@ -52,6 +55,7 @@ const ProductGrid = () => {
       image: productBag,
       category: "Acessórios",
       isSale: true,
+      sizes: ['Único']
     },
     {
       id: 4,
@@ -59,6 +63,7 @@ const ProductGrid = () => {
       price: 299.90,
       image: productDress,
       category: "Feminino",
+      sizes: ['PP', 'P', 'M', 'G', 'GG']
     },
     {
       id: 5,
@@ -66,6 +71,7 @@ const ProductGrid = () => {
       price: 459.90,
       image: productBlazer,
       category: "Feminino",
+      sizes: ['PP', 'P', 'M', 'G', 'GG']
     },
     {
       id: 6,
@@ -73,6 +79,7 @@ const ProductGrid = () => {
       price: 599.90,
       image: productBag,
       category: "Acessórios",
+      sizes: ['Único']
     },
   ];
 
@@ -99,6 +106,7 @@ const ProductGrid = () => {
             description: p.description,
             inStock: p.in_stock,
             stockQuantity: p.stock_quantity,
+            sizes: p.sizes || [],
             isSale: p.original_price && p.original_price > p.price,
             isNew: false // Pode ser calculado baseado na data de criação
           }));
