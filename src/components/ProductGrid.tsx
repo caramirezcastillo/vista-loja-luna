@@ -170,7 +170,7 @@ const ProductGrid = () => {
           {(isSearchActive && searchTerm ? searchProducts(products, searchTerm) : products)
             .filter(product => product && typeof product.id === 'number' && !isNaN(product.id))
             .map((product) => (
-            <ProductCard key={product.id} {...product} />
+            <ProductCard key={product.id} id={product.id as number} {...product} />
           ))}
         </div>
 

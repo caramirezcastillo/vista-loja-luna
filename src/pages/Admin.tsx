@@ -130,7 +130,8 @@ const Admin: React.FC = () => {
           category: p.category,
           description: p.description,
           inStock: p.in_stock,
-          stockQuantity: p.stock_quantity
+          stockQuantity: p.stock_quantity,
+          sizes: p.sizes || []
         }));
         setProducts(supabaseProducts);
         return true;
@@ -420,7 +421,7 @@ const Admin: React.FC = () => {
             description: data.description,
             inStock: data.in_stock,
             stockQuantity: data.stock_quantity,
-            sizes: data.sizes || []
+            sizes: (data as any).sizes || []
           };
           const updatedProducts = [...products, newProduct];
           setProducts(updatedProducts);
@@ -838,7 +839,6 @@ const Admin: React.FC = () => {
                             stockQuantity: 0,
                             sizes: []
                           });
-                          setImageInputType('url');
                         }}
                         className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
                       >
