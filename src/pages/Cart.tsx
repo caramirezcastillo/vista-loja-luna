@@ -10,7 +10,7 @@ import Footer from "@/components/Footer";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { items: cartItems, updateQuantity, removeItem, getTotalItems, getTotalPrice } = useCart();
+  const { items: cartItems, updateQuantity, removeItem, getTotalItems, getTotalPrice, updateSize } = useCart();
 
   const subtotal = getTotalPrice();
   const shipping = subtotal > 200 ? 0 : 29.90;
@@ -79,8 +79,24 @@ const Cart = () => {
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                      <div className="text-sm text-muted-foreground mb-3">
-                        <span>Tamanho: {item.size}</span> • <span>Cor: {item.color}</span>
+                      <div className="text-sm text-muted-foreground mb-3 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span>Tamanho:</span>
+                          <select
+                            value={item.size}
+                            onChange={(e) => updateSize(item.id, e.target.value)}
+                            className="text-sm border border-gray-300 rounded px-2 py-1 bg-white text-gray-900 focus:ring-2 focus:ring-fashion-gold focus:border-fashion-gold"
+                          >
+                            {(item.availableSizes || ['PP', 'P', 'M', 'G', 'GG', 'XG', 'Único']).map((size) => (
+                              <option key={size} value={size}>
+                                {size}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <span>Cor: {item.color}</span>
+                        </div>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">

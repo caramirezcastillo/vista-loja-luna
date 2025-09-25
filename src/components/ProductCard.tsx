@@ -17,6 +17,7 @@ interface ProductCardProps {
   isSale?: boolean;
   stockQuantity?: number;
   inStock?: boolean;
+  sizes?: string[];
 }
 
 const ProductCard = ({ 
@@ -29,12 +30,14 @@ const ProductCard = ({
   isNew = false, 
   isSale = false,
   stockQuantity = 0,
-  inStock = true
+  inStock = true,
+  sizes = []
 }: ProductCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
-  
+  const [selectedSize, setSelectedSize] = useState<string>(sizes.length > 0 ? sizes[0] : "M");
+  const [isHovered, setIsHovered] = useState(false);
+
   const productData = { id: Number(id), name, price, originalPrice, image, category, isNew, isSale };
   const isProductFavorite = isFavorite(Number(id));
 
@@ -44,8 +47,9 @@ const ProductCard = ({
       name,
       price,
       image,
-      size: "M", // Default size
-      color: "Padrão" // Default color
+      size: selectedSize,
+      color: "Padrão", // Default color
+      availableSizes: sizes
     });
     
     toast({
@@ -166,6 +170,29 @@ const ProductCard = ({
             }
           </span>
         </div>
+        
+        {/* Available Sizes */}
+        {/* Size Selector */}
+        {sizes && sizes.length > 0 && (
+          <div className="pt-2 border-t border-gray-100">
+            <div className="text-xs text-muted-foreground mb-2">Tamanho:</div>
+            <div className="flex flex-wrap gap-1">
+              {sizes.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+                    selectedSize === size
+                      ? 'bg-fashion-gold text-white'
+                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

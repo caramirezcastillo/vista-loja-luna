@@ -21,10 +21,14 @@ interface Product {
   description?: string;
   inStock?: boolean;
   stockQuantity?: number;
+  sizes?: string[];
 }
 
 const ShortsProductCard = ({ product }: { product: Product }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [selectedSize, setSelectedSize] = useState<string>(
+    product.sizes && product.sizes.length > 0 ? product.sizes[0] : "M"
+  );
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   
@@ -64,8 +68,9 @@ const ShortsProductCard = ({ product }: { product: Product }) => {
       name: product.name,
       price: product.price,
       image: product.image,
-      size: "M", // Default size
-      color: "Padrão" // Default color
+      size: selectedSize,
+      color: "Padrão", // Default color
+      availableSizes: product.sizes || []
     });
     
     toast({
@@ -158,6 +163,28 @@ const ShortsProductCard = ({ product }: { product: Product }) => {
             </span>
           )}
         </div>
+
+        {/* Size Selector */}
+        {product.sizes && product.sizes.length > 0 && (
+          <div className="pt-2 border-t border-gray-100 mt-2">
+            <div className="text-xs text-muted-foreground mb-2">Tamanho:</div>
+            <div className="flex flex-wrap gap-1">
+              {product.sizes.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md transition-colors ${
+                    selectedSize === size
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

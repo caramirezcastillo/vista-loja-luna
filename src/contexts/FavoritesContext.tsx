@@ -52,8 +52,21 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
     }
   }, [isAuthenticated, user]);
 
+  // Função para validar se uma string é um UUID válido
+  const isValidUUID = (str: string): boolean => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(str);
+  };
+
   const loadFavoritesFromSupabase = async () => {
     if (!user) return;
+    
+    // Verificar se o user.id é um UUID válido antes de fazer a query
+    if (!isValidUUID(user.id)) {
+      console.log('⚠️ User ID não é um UUID válido, usando localStorage:', user.id);
+      loadFavoritesFromLocalStorage();
+      return;
+    }
     
     try {
       setLoading(true);
@@ -125,6 +138,13 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
 
   const addToFavorites = async (product: Product) => {
     if (isAuthenticated && user) {
+      // Verificar se o user.id é um UUID válido antes de fazer a query
+      if (!isValidUUID(user.id)) {
+        console.log('⚠️ User ID não é um UUID válido, usando localStorage para adicionar favorito:', user.id);
+        addToFavoritesLocal(product);
+        return;
+      }
+
       try {
         console.log('➕ Adicionando favorito no Supabase:', product.name);
         
@@ -172,6 +192,13 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
 
   const removeFromFavorites = async (productId: number) => {
     if (isAuthenticated && user) {
+      // Verificar se o user.id é um UUID válido antes de fazer a query
+      if (!isValidUUID(user.id)) {
+        console.log('⚠️ User ID não é um UUID válido, usando localStorage para remover favorito:', user.id);
+        removeFromFavoritesLocal(productId);
+        return;
+      }
+
       try {
         console.log('➖ Removendo favorito do Supabase:', productId);
         
@@ -218,6 +245,14 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
 
   const clearFavorites = async () => {
     if (isAuthenticated && user) {
+      // Verificar se o user.id é um UUID válido antes de fazer a query
+      if (!isValidUUID(user.id)) {
+        console.log('⚠️ User ID não é um UUID válido, limpando apenas localStorage:', user.id);
+        setFavorites([]);
+        localStorage.removeItem('userFavorites');
+        return;
+      }
+
       try {
         console.log('🗑️ Limpando favoritos do Supabase...');
         
@@ -236,7 +271,7 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
       }
     }
     
-    // Sempre limpar estado local e localStorage
+    // Limpar estado local e localStorage
     setFavorites([]);
     localStorage.removeItem('userFavorites');
   };
