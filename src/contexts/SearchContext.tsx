@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface Product {
-  id: number;
+  id: string | number; // Permitir tanto string (UUID) quanto number
   name: string;
   price: number;
   originalPrice?: number;
@@ -12,6 +12,7 @@ interface Product {
   stockQuantity?: number;
   isSale?: boolean;
   isNew?: boolean;
+  sizes?: string[];
 }
 
 interface SearchContextType {

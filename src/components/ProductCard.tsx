@@ -7,7 +7,7 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import { toast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
-  id: number;
+  id: string | number; // Permitir tanto string (UUID) quanto number
   name: string;
   price: number;
   originalPrice?: number;

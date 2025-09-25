@@ -8,7 +8,7 @@ import productBlazer from "@/assets/product-blazer.jpg";
 import productBag from "@/assets/product-bag.jpg";
 
 interface Product {
-  id: number;
+  id: string | number; // Permitir tanto string (UUID) quanto number
   name: string;
   price: number;
   originalPrice?: number;
@@ -87,17 +87,20 @@ const ProductGrid = () => {
   useEffect(() => {
     const loadProducts = async () => {
       try {
+        console.log('🛍️ Carregando produtos do Supabase...');
         // Tentar carregar do Supabase primeiro
         const { data, error } = await supabase
           .from('products')
           .select('*')
           .order('created_at', { ascending: false });
 
+        console.log('📦 Dados do Supabase:', { data, error });
+
         if (error) throw error;
 
         if (data && data.length > 0) {
           const supabaseProducts = data.map((p: any) => ({
-            id: Number(p.id),
+            id: p.id, // Usar o UUID como string
             name: p.name,
             price: p.price,
             originalPrice: p.original_price,
@@ -110,11 +113,12 @@ const ProductGrid = () => {
             isSale: p.original_price && p.original_price > p.price,
             isNew: false // Pode ser calculado baseado na data de criação
           }));
+          console.log('✅ Produtos mapeados:', supabaseProducts);
           setProducts(supabaseProducts);
           return;
         }
       } catch (error) {
-        console.error('Erro ao carregar produtos do Supabase:', error);
+        console.error('❌ Erro ao carregar produtos do Supabase:', error);
       }
 
       // Fallback para localStorage
@@ -124,15 +128,18 @@ const ProductGrid = () => {
         // Filtrar apenas produtos em estoque e garantir que o id seja number
         const availableProducts = adminProducts
           .filter((product: any) => product.inStock !== false)
-          .map((product: any) => ({
+            .map((product: any) => ({
             ...product,
-            id: typeof product.id === 'string' ? parseInt(product.id, 10) : Number(product.id)
+            id: typeof product.id === 'string' ? product.id : Number(product.id) // Manter como string ou converter para number
           }))
-          .filter((product: Product) => !isNaN(product.id));
+          .filter((product: Product) => product.id && !isNaN(Number(product.id)));
         
         if (availableProducts.length > 0) {
           // Combinar produtos do admin com produtos padrão, ajustando IDs para evitar conflitos
-          const maxAdminId = Math.max(...availableProducts.map((p: Product) => p.id), 0);
+          const numericIds = availableProducts
+            .map((p: Product) => typeof p.id === 'number' ? p.id : 0)
+            .filter(id => id > 0);
+          const maxAdminId = numericIds.length > 0 ? Math.max(...numericIds) : 0;
           const adjustedDefaultProducts = defaultProducts.map((product, index) => ({
             ...product,
             id: maxAdminId + index + 1
@@ -168,9 +175,9 @@ const ProductGrid = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {(isSearchActive && searchTerm ? searchProducts(products, searchTerm) : products)
-            .filter(product => product && typeof product.id === 'number' && !isNaN(product.id))
+            .filter(product => product && product.id)
             .map((product) => (
-            <ProductCard key={product.id} id={product.id as number} {...product} />
+            <ProductCard key={product.id} id={product.id} {...product} />
           ))}
         </div>
 

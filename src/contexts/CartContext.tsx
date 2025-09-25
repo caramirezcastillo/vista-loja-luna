@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { supabase } from '../integrations/supabase/client';
 
 export interface CartItem {
-  id: number;
+  id: string | number; // Permitir tanto string (UUID) quanto number
   name: string;
   price: number;
   image: string;
@@ -15,9 +15,9 @@ export interface CartItem {
 interface CartContextType {
   items: CartItem[];
   addItem: (item: Omit<CartItem, 'quantity'>) => void;
-  removeItem: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
-  updateSize: (id: number, newSize: string) => void;
+  removeItem: (id: string | number) => void;
+  updateQuantity: (id: string | number, quantity: number) => void;
+  updateSize: (id: string | number, newSize: string) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -164,11 +164,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     });
   };
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: string | number) => {
     setItems(currentItems => currentItems.filter(item => item.id !== id));
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string | number, quantity: number) => {
     if (quantity <= 0) {
       removeItem(id);
       return;
@@ -181,7 +181,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     );
   };
 
-  const updateSize = (id: number, newSize: string) => {
+  const updateSize = (id: string | number, newSize: string) => {
     setItems(currentItems => 
       currentItems.map(item => 
         item.id === id ? { ...item, size: newSize } : item

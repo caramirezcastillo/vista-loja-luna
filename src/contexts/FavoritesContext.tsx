@@ -3,7 +3,7 @@ import { supabase } from '../integrations/supabase/client';
 import { useAuth } from './AuthContext';
 
 interface Product {
-  id: number;
+  id: string | number; // Permitir tanto string (UUID) quanto number
   name: string;
   price: number;
   originalPrice?: number;
@@ -16,8 +16,8 @@ interface Product {
 interface FavoritesContextType {
   favorites: Product[];
   addToFavorites: (product: Product) => void;
-  removeFromFavorites: (productId: number) => void;
-  isFavorite: (productId: number) => boolean;
+  removeFromFavorites: (productId: string | number) => void;
+  isFavorite: (productId: string | number) => boolean;
   toggleFavorite: (product: Product) => void;
   clearFavorites: () => void;
   loading: boolean;
@@ -202,7 +202,7 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
     });
   };
 
-  const removeFromFavorites = async (productId: number) => {
+  const removeFromFavorites = async (productId: string | number) => {
     if (isAuthenticated && user) {
       // Verificar se o user.id é um UUID válido antes de fazer a query
       if (!isValidUUID(user.id)) {
@@ -239,11 +239,11 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
     }
   };
 
-  const removeFromFavoritesLocal = (productId: number) => {
+  const removeFromFavoritesLocal = (productId: string | number) => {
     setFavorites(prev => prev.filter(item => item.id !== productId));
   };
 
-  const isFavorite = (productId: number) => {
+  const isFavorite = (productId: string | number) => {
     return favorites.some(item => item.id === productId);
   };
 
