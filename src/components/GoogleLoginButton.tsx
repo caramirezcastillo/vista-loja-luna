@@ -21,7 +21,7 @@ interface GoogleLoginButtonProps {
 }
 
 const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onSuccess, onError }) => {
-  const { loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as any)?.from?.pathname || '/';
@@ -72,9 +72,10 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onSuccess, onErro
         })
       };
       
-      const success = await loginWithGoogle(mockGoogleUser);
+      // Simular login com Google (funcionalidade desabilitada)
+      const result = await login('usuario.demo@gmail.com', 'demo123');
       
-      if (success) {
+      if (result.success) {
         if (onSuccess) onSuccess();
         navigate(from, { replace: true });
       } else {
@@ -103,9 +104,10 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onSuccess, onErro
         })
       };
       
-      const success = await loginWithGoogle(mockGoogleUser);
+      // Simular login com Google (funcionalidade desabilitada)
+      const result = await login('usuario.demo@gmail.com', 'demo123');
       
-      if (success) {
+      if (result.success) {
         if (onSuccess) onSuccess();
         navigate(from, { replace: true });
       } else {

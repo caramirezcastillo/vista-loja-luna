@@ -72,18 +72,10 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
       setLoading(true);
       console.log('🔄 Carregando favoritos do Supabase...');
       
+      // Query manual com JOIN para evitar problemas de relacionamento
       const { data: favoritesData, error } = await supabase
         .from('favorites')
-        .select(`
-          product_id,
-          products (
-            id,
-            name,
-            price,
-            image,
-            category
-          )
-        `)
+        .select('product_id')
         .eq('user_id', user.id);
 
       if (error) {
@@ -93,19 +85,34 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
         return;
       }
 
-      if (favoritesData) {
-        const formattedFavorites = favoritesData
-          .filter(fav => fav.products) // Filtrar apenas favoritos com produtos válidos
-          .map(fav => ({
-            id: parseInt(fav.products.id),
-            name: fav.products.name,
-            price: fav.products.price,
-            image: fav.products.image,
-            category: fav.products.category
-          }));
+      if (favoritesData && favoritesData.length > 0) {
+        // Buscar detalhes dos produtos favoritos
+        const productIds = favoritesData.map(fav => fav.product_id);
+        
+        const { data: productsData, error: productsError } = await supabase
+          .from('products')
+          .select('id, name, price, image, category')
+          .in('id', productIds);
+
+        if (productsError) {
+          console.error('❌ Erro ao carregar produtos favoritos:', productsError);
+          loadFavoritesFromLocalStorage();
+          return;
+        }
+
+        const formattedFavorites = productsData?.map(product => ({
+          id: product.id,
+          name: product.name,
+          price: Number(product.price),
+          image: product.image,
+          category: product.category
+        })) || [];
         
         setFavorites(formattedFavorites);
         console.log('✅ Favoritos carregados do Supabase:', formattedFavorites.length);
+      } else {
+        setFavorites([]);
+        console.log('📭 Nenhum favorito encontrado no Supabase');
       }
     } catch (error) {
       console.error('💥 Erro ao carregar favoritos:', error);
@@ -123,9 +130,8 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
         // Validar e filtrar produtos com IDs válidos
         const validFavorites = parsedFavorites.filter((product: any) => 
           product && 
-          typeof product.id === 'number' && 
-          !isNaN(product.id) && 
-          product.id > 0
+          (typeof product.id === 'number' || typeof product.id === 'string') && 
+          product.id !== null
         );
         setFavorites(validFavorites);
         console.log('📱 Favoritos carregados do localStorage:', validFavorites.length);
