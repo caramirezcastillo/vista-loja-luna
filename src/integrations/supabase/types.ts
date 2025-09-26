@@ -18,43 +18,28 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          product_id: string | null
-          user_id: string | null
+          product_id: string
+          user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
-          product_id?: string | null
-          user_id?: string | null
+          product_id: string
+          user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
-          product_id?: string | null
-          user_id?: string | null
+          product_id?: string
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "favorites_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "favorites_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       order_items: {
         Row: {
           created_at: string | null
           id: string
-          order_id: string | null
+          order_id: string
           price: number
           product_id: string | null
           product_name: string
@@ -63,7 +48,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
-          order_id?: string | null
+          order_id: string
           price: number
           product_id?: string | null
           product_name: string
@@ -72,28 +57,13 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
-          order_id?: string | null
+          order_id?: string
           price?: number
           product_id?: string | null
           product_name?: string
           quantity?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "order_items_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "order_items_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       orders: {
         Row: {
@@ -106,7 +76,6 @@ export type Database = {
           status: string | null
           total: number
           updated_at: string | null
-          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -118,7 +87,6 @@ export type Database = {
           status?: string | null
           total: number
           updated_at?: string | null
-          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -130,17 +98,8 @@ export type Database = {
           status?: string | null
           total?: number
           updated_at?: string | null
-          user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "orders_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       products: {
         Row: {
@@ -148,11 +107,15 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
-          image: string | null
+          image: string
           image2: string | null
           in_stock: boolean | null
+          is_new: boolean | null
+          is_sale: boolean | null
           name: string
+          original_price: number | null
           price: number
+          sizes: Json | null
           stock_quantity: number | null
           updated_at: string | null
         }
@@ -161,11 +124,15 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          image?: string | null
+          image: string
           image2?: string | null
           in_stock?: boolean | null
+          is_new?: boolean | null
+          is_sale?: boolean | null
           name: string
+          original_price?: number | null
           price: number
+          sizes?: Json | null
           stock_quantity?: number | null
           updated_at?: string | null
         }
@@ -174,36 +141,16 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          image?: string | null
+          image?: string
           image2?: string | null
           in_stock?: boolean | null
+          is_new?: boolean | null
+          is_sale?: boolean | null
           name?: string
+          original_price?: number | null
           price?: number
+          sizes?: Json | null
           stock_quantity?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      user_profiles: {
-        Row: {
-          created_at: string | null
-          id: string
-          is_admin: boolean | null
-          name: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id: string
-          is_admin?: boolean | null
-          name: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          is_admin?: boolean | null
-          name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -212,31 +159,28 @@ export type Database = {
         Row: {
           created_at: string | null
           email: string
-          google_id: string | null
           id: string
           is_admin: boolean | null
           name: string
-          password_hash: string | null
+          phone: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           email: string
-          google_id?: string | null
           id?: string
           is_admin?: boolean | null
           name: string
-          password_hash?: string | null
+          phone?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           email?: string
-          google_id?: string | null
           id?: string
           is_admin?: boolean | null
           name?: string
-          password_hash?: string | null
+          phone?: string | null
           updated_at?: string | null
         }
         Relationships: []
