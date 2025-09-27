@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VISTA LOJA LUNA  - Catálogo de Roupas</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- CSS Base -->
+    <link rel="stylesheet" href="css/sections/base.css">
+    <link rel="stylesheet" href="css/sections/header.css">
+    <link rel="stylesheet" href="css/sections/main.css">
+    <link rel="stylesheet" href="css/sections/catalog.css">
+    <link rel="stylesheet" href="css/sections/about.css">
+    <link rel="stylesheet" href="css/sections/contact.css">
+    <link rel="stylesheet" href="css/sections/footer.css">
+    <link rel="stylesheet" href="css/sections/modal.css">
+    <link rel="stylesheet" href="css/sections/animations.css">
+    <link rel="stylesheet" href="css/sections/responsive.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -39,15 +49,15 @@
         </nav>
     </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">VISTA LOJA LUNA </h1>
-            <p class="hero-subtitle">Moda feminina com elegância e estilo</p>
-            <a href="#catalog" class="cta-button">Ver Catálogo</a>
+    <!-- Main Section -->
+    <section id="home" class="main">
+        <div class="main-background">
+            <img src="img/bg.png" alt="Fundo principal" class="main-bg-image" />
         </div>
-        <div class="hero-image">
-            <div class="butterfly-decoration"></div>
+        <div class="main-content">
+            <h1 class="main-title">VISTA LOJA LUNA</h1>
+            <p class="main-subtitle">Moda feminina com elegância e estilo</p>
+            <a href="#catalog" class="cta-button">Ver Catálogo</a>
         </div>
     </section>
 
@@ -384,6 +394,14 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <!-- Scripts modulares -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/dom.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/whatsapp.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
