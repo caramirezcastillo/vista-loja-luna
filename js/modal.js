@@ -35,7 +35,7 @@ function setupModal() {
 
 // Abrir modal do produto
 function openProductModal(productId) {
-    const product = window.PRODUCTS_DATA[productId];
+    const product = window.PRODUCTS_DATA.find(p => p.id === productId);
     if (!product) return;
 
     const modal = window.DOMElements.modal;
