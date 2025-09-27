@@ -65,7 +65,7 @@ const Admin: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [siteConfig, setSiteConfig] = useState<SiteConfig>({
-    siteName: 'Vista Loja Luna',
+    siteName: 'Vista Loja Luna 2',
     siteDescription: 'Sua loja de moda online',
     contactEmail: 'contato@vistalojluna.com',
     contactPhone: '(11) 99999-9999',
