@@ -8,6 +8,14 @@ const CONFIG = {
 const PRODUCTS_DATA = [
     {
         id: 'vestido-floral-1',
+        name: 'Vestido Floral KAdaw',
+        price: 14909999.90,
+        image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop',
+        description: 'Vestido floral elegante confeccionado em tecido de alta qualidade. Perfeito para ocasiões especiais, combina sofisticação e feminilidade. Modelagem que valoriza a silhueta feminina.',
+        category: 'vestidos'
+    },
+    {
+        id: 'vestido-floral-1',
         name: 'Vestido Floral Elegante 12312312',
         price: 14909999.90,
         image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop',
