@@ -208,6 +208,11 @@ class ProductDrawer {
             window.loadProducts();
         }
         
+        // Reconfigurar filtros após adicionar produto
+        if (typeof window.setupProductFiltering === 'function') {
+            window.setupProductFiltering();
+        }
+        
         // Store in localStorage for persistence
         this.saveProductToStorage(product);
     }
