@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/sections/contact.css">
     <link rel="stylesheet" href="css/sections/footer.css">
     <link rel="stylesheet" href="css/sections/modal.css">
+    <link rel="stylesheet" href="css/sections/drawer.css">
     <link rel="stylesheet" href="css/sections/animations.css">
     <link rel="stylesheet" href="css/sections/responsive.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -230,6 +231,67 @@
         </div>
     </div>
 
+    <!-- Floating Add Product Button -->
+    <button id="floatingAddBtn" class="floating-add-btn" title="Adicionar Produto">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Add Product Drawer -->
+    <div id="addProductDrawer" class="drawer">
+        <div class="drawer-content">
+            <div class="drawer-header">
+                <h2>Adicionar Novo Produto</h2>
+                <button id="closeDrawer" class="close-drawer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="drawer-body">
+                <form id="addProductForm" class="add-product-form">
+                    <div class="form-group">
+                        <label for="productName">Nome do Produto *</label>
+                        <input type="text" id="productName" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productPrice">Preço *</label>
+                        <input type="number" id="productPrice" name="price" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productImage">Imagem do Produto *</label>
+                        <div class="image-input-container">
+                            <input type="url" id="productImageUrl" name="imageUrl" placeholder="Cole o link da imagem">
+                            <span class="image-input-divider">ou</span>
+                            <input type="file" id="productImageFile" name="imageFile" accept="image/*">
+                        </div>
+                        <div id="imagePreview" class="image-preview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productDescription">Descrição *</label>
+                        <textarea id="productDescription" name="description" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productCategory">Categoria *</label>
+                        <select id="productCategory" name="category" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="vestidos">Vestidos</option>
+                            <option value="blusas">Blusas</option>
+                            <option value="calcas">Calças</option>
+                            <option value="acessorios">Acessórios</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="cancelAddProduct" class="btn-cancel">Cancelar</button>
+                        <button type="submit" class="btn-submit">Adicionar Produto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts modulares -->
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
@@ -239,6 +301,7 @@
     <script src="js/whatsapp.js"></script>
     <script src="js/animations.js"></script>
     <script src="js/load-products.js"></script>
+    <script src="js/drawer.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

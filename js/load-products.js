@@ -32,8 +32,27 @@ function generateProductHTML(product) {
 function loadProducts() {
     const productsGrid = document.getElementById('products-grid');
     
-    if (productsGrid && window.PRODUCTS_DATA && Array.isArray(window.PRODUCTS_DATA)) {
-        productsGrid.innerHTML = window.PRODUCTS_DATA.map(generateProductHTML).join('');
+    if (productsGrid) {
+        let allProducts = [];
+        
+        // Carregar produtos padrão
+        if (window.PRODUCTS_DATA && Array.isArray(window.PRODUCTS_DATA)) {
+            allProducts = [...window.PRODUCTS_DATA];
+        }
+        
+        // Carregar produtos customizados do localStorage
+        try {
+            const customProducts = JSON.parse(localStorage.getItem('customProducts') || '[]');
+            allProducts = [...allProducts, ...customProducts];
+        } catch (error) {
+            console.error('Erro ao carregar produtos customizados:', error);
+        }
+        
+        // Renderizar todos os produtos
+        productsGrid.innerHTML = allProducts.map(generateProductHTML).join('');
+        
+        // Atualizar array global de produtos
+        window.products = allProducts;
     }
 }
 

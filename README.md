@@ -7,15 +7,36 @@ Site completo de catálogo de roupas para a marca **LUNA VISTA LOJA**, desenvolv
 ## Estrutura do Projeto
 
 ```
-luna-vista-loja/
-├── index.html          # Página principal
+vista-loja-luna-2/
+├── index.html              # Página principal
 ├── css/
-│   └── style.css       # Estilos CSS responsivos
+│   └── sections/
+│       ├── base.css        # Estilos base e variáveis
+│       ├── header.css      # Estilos do cabeçalho
+│       ├── main.css        # Estilos da seção principal
+│       ├── catalog.css     # Estilos do catálogo
+│       ├── about.css       # Estilos da seção sobre
+│       ├── contact.css     # Estilos da seção contato
+│       ├── footer.css      # Estilos do rodapé
+│       ├── modal.css       # Estilos do modal de produtos
+│       ├── drawer.css      # Estilos do drawer de adição
+│       ├── animations.css  # Animações e transições
+│       └── responsive.css  # Estilos responsivos
 ├── js/
-│   └── script.js       # Funcionalidades JavaScript
+│   ├── config.js           # Configurações globais
+│   ├── utils.js            # Funções utilitárias
+│   ├── dom.js              # Manipulação do DOM
+│   ├── products.js         # Gerenciamento de produtos
+│   ├── modal.js            # Funcionalidades do modal
+│   ├── whatsapp.js         # Integração WhatsApp
+│   ├── animations.js       # Animações JavaScript
+│   ├── load-products.js    # Carregamento de produtos
+│   ├── drawer.js           # Funcionalidades do drawer
+│   └── main.js             # Script principal
 ├── img/
-│   └── logo.png        # Logomarca da empresa
-└── README.md           # Este arquivo
+│   ├── logo.png            # Logomarca da empresa
+│   └── bg.png              # Imagem de fundo
+└── README.md               # Este arquivo
 ```
 
 ## Características Principais
@@ -35,6 +56,9 @@ luna-vista-loja/
 - **Formulário de contato** que redireciona para WhatsApp
 - **Menu responsivo** para dispositivos móveis
 - **Navegação suave** entre seções
+- **Botão flutuante** para adicionar novos produtos
+- **Drawer de adição** com formulário completo
+- **Persistência de dados** no localStorage
 
 ### Seções do Site
 1. **Header** - Navegação principal com logo
@@ -60,7 +84,24 @@ const CONFIG = {
 
 ## Personalização de Produtos
 
-Os produtos são definidos no arquivo `js/script.js` no objeto `PRODUCTS_DATA`. Para adicionar ou modificar produtos:
+### Adicionando Produtos via Interface
+
+O site agora inclui um **botão flutuante** no canto inferior direito que permite adicionar novos produtos diretamente pela interface:
+
+1. **Clique no botão flutuante** (+)
+2. **Preencha o formulário** com:
+   - Nome do produto
+   - Preço (formato numérico)
+   - Imagem (URL ou upload local)
+   - Descrição
+   - Categoria (vestidos, blusas, calças, acessórios)
+3. **Clique em "Adicionar Produto"**
+
+Os produtos adicionados são salvos automaticamente no localStorage e aparecem imediatamente no catálogo.
+
+### Adicionando Produtos via Código
+
+Os produtos também podem ser definidos no arquivo `js/script.js` no objeto `PRODUCTS_DATA`:
 
 ```javascript
 const PRODUCTS_DATA = {
