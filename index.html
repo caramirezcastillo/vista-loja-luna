@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/sections/contact.css">
     <link rel="stylesheet" href="css/sections/footer.css">
     <link rel="stylesheet" href="css/sections/modal.css">
+    <link rel="stylesheet" href="css/sections/carousel.css">
     <link rel="stylesheet" href="css/sections/animations.css">
     <link rel="stylesheet" href="css/sections/responsive.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,7 +25,7 @@
         <nav class="navbar">
             <div class="nav-container"> 
                 <div class="logo">
-                    <img src="img/logo.png" alt="VISTA LOJA LUNA " class="logo-img">
+                    <H1>LUNA</H1>
                 </div>
                 <ul class="nav-menu">
                     <li class="nav-item">
@@ -49,17 +50,34 @@
         </nav>
     </header>
 
-    <!-- Main Section -->
+    <!-- Main Section - Carousel -->
     <section id="home" class="main">
-        <div class="main-background">
-            <img src="img/bg.png" alt="Fundo principal" class="main-bg-image" />
-        </div>
-        <div class="main-content">
-            <h1 class="main-title">VISTA LOJA LUNA</h1>
-            <p class="main-subtitle">Moda feminina com elegância e estilo</p>
-            <a href="#catalog" class="cta-button">Ver Catálogo</a>
+        <div class="carousel-container">
+            <div class="carousel-wrapper">
+                <div class="carousel-slide active">
+                    <img src="img/Banner.png" alt="Banner 1" class="carousel-image" />
+                </div>
+                <div class="carousel-slide">
+                    <img src="img/Banner2.png" alt="Banner 2" class="carousel-image" />
+                </div>
+            </div>
+            
+            <!-- Navigation arrows -->
+            <button class="carousel-btn carousel-prev" onclick="changeSlide(-1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-btn carousel-next" onclick="changeSlide(1)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <!-- Dots indicator -->
+            <div class="carousel-dots">
+                <span class="dot active" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+            </div>
         </div>
     </section>
+    
 
     <!-- Catalog Section -->
     <section id="catalog" class="catalog">
@@ -235,6 +253,7 @@
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/dom.js"></script>
+    <script src="js/carousel.js"></script>
     <script src="js/products.js"></script>
     <script src="js/modal.js"></script>
     <script src="js/whatsapp.js"></script>
