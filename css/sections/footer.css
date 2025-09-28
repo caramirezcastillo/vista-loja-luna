@@ -18,6 +18,14 @@
     filter: brightness(0) invert(1);
 }
 
+.footer-logo-text {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 2px;
+}
+
 .footer-links {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

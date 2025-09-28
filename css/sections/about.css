@@ -1,7 +1,11 @@
 /* About Section */
 .about {
     padding: 5rem 0;
-    background: var(--background-light);
+    background: var(--primary-color);
+}
+
+.about .section-title {
+    color: white;
 }
 
 .about-content {
@@ -13,7 +17,7 @@
 
 .about-text p {
     font-size: 1.1rem;
-    color: var(--text-light);
+    color: white;
     margin-bottom: 1.5rem;
     line-height: 1.8;
 }

@@ -1,6 +1,6 @@
 // Configurações globais da aplicação
 const CONFIG = {
-    whatsappNumber: '5511999999999', // Substitua pelo número real
+    whatsappNumber: '5579996465615', // Substitua pelo número real
     businessName: 'LUNA VISTA LOJA'
 };
 
