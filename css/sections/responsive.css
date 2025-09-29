@@ -43,11 +43,12 @@
         transform: translateY(-8px) rotate(-45deg);
     }
 
+    /* Banner padrão: 80vh, Main proporcional: 56vh (70% do banner) */
     .main {
         flex-direction: column;
         text-align: center;
         padding: 1rem 0;
-        min-height: 50vh;
+        min-height: 56vh;
     }
 
     .main-content {
@@ -260,6 +261,11 @@
 
 /* Breakpoint para telas pequenas (481px - 640px) */
 @media (max-width: 640px) {
+    /* Banner herda 80vh, Main proporcional: 56vh (70% do banner) */
+    .main {
+        min-height: 56vh;
+    }
+
     .modal-content {
         width: 92%;
         margin: 6% auto;
@@ -309,6 +315,11 @@
 
 /* Breakpoint específico para resolução 463x870 e similares */
 @media (max-width: 470px) {
+    /* Banner herda 40vh, Main proporcional: 28vh (70% do banner) */
+    .main {
+        min-height: 28vh;
+    }
+
     .modal-content {
         width: 96%;
         margin: 2% auto;
@@ -390,8 +401,13 @@
 
 /* Breakpoint para smartphones (max-width: 480px) */
 @media (max-width: 480px) {
+    /* Banner: 40vh, Main proporcional: 28vh (70% do banner) */
     .carousel-container {
         height: 40vh;
+    }
+
+    .main {
+        min-height: 28vh;
     }
 
     .main-title {
@@ -494,6 +510,11 @@
 
 /* Breakpoint específico para resolução 350x500 e similares */
 @media (max-width: 350px) {
+    /* Banner herda 40vh, Main proporcional: 28vh (70% do banner) */
+    .main {
+        min-height: 28vh;
+    }
+
     /* Seção de contato otimizada para telas muito pequenas */
     .contact {
         padding: 1.5rem 0;
@@ -625,9 +646,9 @@
         height: 6px;
     }
 
-    /* Reduzir altura da seção main para evitar espaçamento excessivo */
+    /* Banner: 18vh, Main proporcional: 12.6vh (70% do banner) */
     .main {
-        min-height: 25vh;
+        min-height: 12.6vh;
         padding: 0.5rem 0;
     }
 
@@ -655,6 +676,11 @@
 
 /* Breakpoint para telas muito pequenas (max-width: 360px) */
 @media (max-width: 360px) {
+    /* Banner herda 40vh, Main proporcional: 28vh (70% do banner) */
+    .main {
+        min-height: 28vh;
+    }
+
     .modal-content {
         width: 98%;
         margin: 2% auto;
