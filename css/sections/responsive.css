@@ -241,6 +241,18 @@
         margin-bottom: 0.8rem;
     }
 
+    .add-to-cart-btn {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+        border-radius: 20px;
+        margin-top: 0.4rem;
+    }
+
+    .product-info {
+        min-height: 130px;
+        padding: 1.2rem;
+    }
+
     .filter-buttons {
         gap: 0.4rem;
         padding: 0 1rem;
@@ -310,6 +322,18 @@
     .modal-whatsapp-btn {
         padding: 0.8rem;
         font-size: 0.9rem;
+    }
+
+    .add-to-cart-btn {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+        border-radius: 20px;
+        margin-top: 0.4rem;
+    }
+
+    .product-info {
+        min-height: 130px;
+        padding: 1.2rem;
     }
 }
 
@@ -397,6 +421,18 @@
         padding: 0.5rem;
         font-size: 0.8rem;
     }
+
+    .add-to-cart-btn {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+        border-radius: 16px;
+        margin-top: 0.4rem;
+    }
+
+    .product-info {
+        min-height: 120px;
+        padding: 1rem;
+    }
 }
 
 /* Breakpoint para smartphones (max-width: 480px) */
@@ -430,6 +466,18 @@
 
     .products-grid {
         grid-template-columns: 1fr;
+    }
+
+    .add-to-cart-btn {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+        border-radius: 18px;
+        margin-top: 0.4rem;
+    }
+
+    .product-info {
+        min-height: 110px;
+        padding: 1rem;
     }
 
     .modal-content {
@@ -598,6 +646,18 @@
     .submit-btn i {
         font-size: 0.8rem;
     }
+
+    .add-to-cart-btn {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        border-radius: 15px;
+        margin-top: 0.3rem;
+    }
+
+    .product-info {
+        min-height: 100px;
+        padding: 0.8rem;
+    }
 }
 
 /* Breakpoint específico para resolução 250x444 e similares */
@@ -671,6 +731,18 @@
     .cta-button {
         padding: 0.6rem 1rem;
         font-size: 0.75rem;
+    }
+
+    .add-to-cart-btn {
+        padding: 0.4rem;
+        font-size: 0.7rem;
+        border-radius: 12px;
+        margin-top: 0.3rem;
+    }
+
+    .product-info {
+        min-height: 90px;
+        padding: 0.6rem;
     }
 }
 
@@ -748,6 +820,18 @@
 
     .section-title {
         font-size: 1.8rem;
+    }
+
+    .add-to-cart-btn {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        border-radius: 15px;
+        margin-top: 0.3rem;
+    }
+
+    .product-info {
+        min-height: 100px;
+        padding: 0.8rem;
     }
 }
 
