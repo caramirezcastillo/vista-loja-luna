@@ -75,42 +75,14 @@
         opacity: 0.3;
     }
 
-    .about-content {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
+    .about-image-container {
         padding: 0 1rem;
     }
 
-    .about-text {
-        text-align: center;
-        padding: 1rem;
-    }
-
-    .about-text h2 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .about-text p {
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-    }
-
-    .about-features {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 0 1rem;
-    }
-
-    .feature {
-        padding: 1rem;
-        text-align: center;
-    }
-
-    .feature h3 {
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
+    .about-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
     }
 
     .contact-content {
