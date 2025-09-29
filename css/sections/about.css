@@ -1,28 +1,18 @@
 /* About Section */
 .about {
-    padding: 3.5rem 0;
-    background: var(--primary-color);
-}
-
-.about .section-title {
-    color: white;
-}
-
-.about-image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 0;
+    margin: 0;
     width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .about-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 15px;
-    box-shadow: var(--shadow-medium);
-    transition: transform 0.3s ease;
-}
-
-.about-image:hover {
-    transform: scale(1.02);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
