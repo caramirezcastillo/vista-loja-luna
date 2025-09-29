@@ -579,6 +579,46 @@
     }
 }
 
+/* Breakpoint específico para resolução 250x444 e similares */
+@media (max-width: 250px) {
+    .carousel-container {
+        height: 25vh;
+        min-height: 180px;
+    }
+
+    .carousel-slide {
+        height: 100%;
+    }
+
+    .carousel-image {
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .carousel-btn {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+
+    .carousel-prev {
+        left: 8px;
+    }
+
+    .carousel-next {
+        right: 8px;
+    }
+
+    .carousel-dots {
+        bottom: 10px;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+    }
+}
+
 /* Breakpoint para telas muito pequenas (max-width: 360px) */
 @media (max-width: 360px) {
     .modal-content {
