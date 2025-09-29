@@ -582,8 +582,9 @@
 /* Breakpoint específico para resolução 250x444 e similares */
 @media (max-width: 250px) {
     .carousel-container {
-        height: 25vh;
-        min-height: 180px;
+        height: 18vh;
+        min-height: 120px;
+        max-height: 150px;
     }
 
     .carousel-slide {
@@ -593,29 +594,35 @@
     .carousel-image {
         height: 100%;
         object-fit: cover;
-        object-position: center;
+        object-position: center top;
     }
 
     .carousel-btn {
-        font-size: 1rem;
-        padding: 8px 12px;
+        font-size: 0.8rem;
+        padding: 6px 8px;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .carousel-prev {
-        left: 8px;
+        left: 5px;
     }
 
     .carousel-next {
-        right: 8px;
+        right: 5px;
     }
 
     .carousel-dots {
-        bottom: 10px;
+        bottom: 5px;
+        gap: 4px;
     }
 
     .dot {
-        width: 8px;
-        height: 8px;
+        width: 6px;
+        height: 6px;
     }
 }
 
