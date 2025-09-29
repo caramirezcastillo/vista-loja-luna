@@ -12,14 +12,17 @@
 }
 
 .modal-content {
-    background-color: white;
-    margin: 5% auto;
+    background: white;
+    margin: 0.5% auto;
     padding: 0;
     border-radius: 15px;
-    width: 90%;
-    max-width: 800px;
+    width: 65%;
+    max-width: 900px;
     position: relative;
-    animation: slideIn 0.3s ease;
+    animation: modalSlideIn 0.3s ease-out;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-height: 99vh;
+    overflow-y: auto;
 }
 
 .close {
@@ -39,9 +42,9 @@
 }
 
 .modal-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
+    display: flex;
+    max-height: calc(99vh - 30px);
+    overflow-y: auto;
 }
 
 .modal-image {
@@ -51,40 +54,40 @@
 
 .modal-image img {
     width: 100%;
-    height: 400px;
-    object-fit: cover;
+    height: 380px;
+    object-fit: contain;
 }
 
 .modal-info {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex: 1;
+    padding: 1rem;
+    max-height: calc(99vh - 30px);
+    overflow-y: auto;
 }
 
 .modal-info h2 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: var(--text-dark);
-    margin-bottom: 1rem;
-}
-
-.modal-info p {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-}
-
-.modal-description {
-    margin-bottom: 1.5rem;
-}
-
-.modal-description h3 {
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--text-dark);
     margin-bottom: 0.5rem;
+}
+
+.modal-info p {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.7rem;
+}
+
+.modal-description {
+    margin-bottom: 0.6rem;
+}
+
+.modal-description h3 {
+    font-size: 1.0rem;
+    margin-bottom: 0.3rem;
+    color: #333;
+    font-weight: 500;
 }
 
 .modal-description p {
@@ -94,14 +97,14 @@
 }
 
 .modal-sizes {
-    margin-bottom: 2rem;
+    margin-bottom: 1.0rem;
 }
 
 .modal-sizes h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-dark);
-    margin-bottom: 1rem;
+    font-size: 1.0rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.6rem;
 }
 
 .size-options {

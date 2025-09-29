@@ -1,32 +1,20 @@
 /* Responsive Design */
 @media (max-width: 768px) {
-    .carousel-container {
-        height: 50vh;
-    }
-
     .hamburger {
         display: flex;
-    }
-
-    .nav-container {
-        padding: 0 15px;
-    }
-
-    .logo-img {
-        height: 40px;
     }
 
     .nav-menu {
         position: fixed;
         left: -100%;
-        top: 60px;
+        top: 70px;
         flex-direction: column;
         background-color: white;
         width: 100%;
         text-align: center;
         transition: 0.3s;
         box-shadow: var(--shadow-medium);
-        padding: 1.5rem 0;
+        padding: 2rem 0;
     }
 
     .nav-menu.active {
@@ -214,7 +202,28 @@
     }
 
     .modal-image img {
-        height: 250px;
+        height: 220px;
+    }
+
+    .modal-content {
+        width: 90%;
+        margin: 8% auto;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    .modal-info {
+        padding: 1.2rem;
+    }
+
+    .modal-info h2 {
+        font-size: 1.4rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .modal-info p {
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
     }
 
     .products-grid {
@@ -263,6 +272,56 @@
     }
 }
 
+/* Breakpoint para telas pequenas (481px - 640px) */
+@media (max-width: 640px) {
+    .modal-content {
+        width: 92%;
+        margin: 6% auto;
+        max-height: 88vh;
+    }
+
+    .modal-info {
+        padding: 1rem;
+    }
+
+    .modal-info h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-info p {
+        font-size: 1.1rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .modal-description h3,
+    .modal-sizes h3 {
+        font-size: 1rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .modal-description p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .modal-image img {
+        height: 200px;
+    }
+
+    .size-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
+    }
+
+    .modal-whatsapp-btn {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Breakpoint para smartphones (max-width: 480px) */
 @media (max-width: 480px) {
     .carousel-container {
         height: 40vh;
@@ -291,28 +350,206 @@
     }
 
     .modal-content {
-        width: 98%;
-        margin: 5% auto;
-        max-height: 90vh;
+        width: 95%;
+        margin: 3% auto;
+        max-height: 92vh;
         overflow-y: auto;
     }
 
     .modal-info {
-        padding: 1rem;
+        padding: 0.8rem;
     }
 
     .modal-info h2 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .modal-info p {
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .modal-description {
+        margin-bottom: 0.8rem;
+    }
+
+    .modal-description h3,
+    .modal-sizes h3 {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .modal-description p {
+        font-size: 0.8rem;
+        line-height: 1.3;
+    }
+
+    .modal-sizes {
+        margin-bottom: 1rem;
+    }
+
+    .size-options {
+        flex-wrap: wrap;
+        gap: 0.2rem;
+    }
+
+    .size-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+    }
+
+    .modal-info {
+        order: 2;
+        width: 100%;
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .modal-whatsapp-btn {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .modal-image {
+        order: 1;
+        width: 100%;
         margin-bottom: 0.5rem;
+    }
+
+    .modal-image img {
+        height: 180px;
+        object-fit: contain;
+        width: 100%;
+    }
+}
+
+/* Breakpoint para telas muito pequenas (max-width: 360px) */
+@media (max-width: 360px) {
+    .modal-content {
+        width: 98%;
+        margin: 2% auto;
+        max-height: 95vh;
+    }
+
+    .modal-info {
+        padding: 0.6rem;
+    }
+
+    .modal-info h2 {
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .modal-info p {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-description h3,
+    .modal-sizes h3 {
+        font-size: 0.85rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .modal-description p {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .modal-image {
+        order: 1;
+        width: 100%;
+        margin-bottom: 0.4rem;
+    }
+
+    .modal-image img {
+        height: 160px;
+        object-fit: contain;
+        width: 100%;
+    }
+
+    .size-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 0.65rem;
+    }
+
+    .modal-info {
+        order: 2;
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .modal-whatsapp-btn {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .main-title {
+        font-size: 1.8rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* Tablet específico (768px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .modal-content {
+        width: 80%;
+        max-width: 650px;
+        max-height: 75vh;
+        overflow-y: auto;
+        margin: 2% auto;
+    }
+
+    .modal-image img {
+        height: 280px;
+    }
+
+    .modal-info {
+        padding: 1.4rem;
+    }
+
+    .modal-info h2 {
+        font-size: 1.4rem;
     }
 
     .modal-info p {
         font-size: 1.2rem;
-        margin-bottom: 0.8rem;
+    }
+}
+
+/* Breakpoint para telas médias (1025px - 1366px) - Notebooks */
+@media (min-width: 1025px) and (max-width: 1366px) {
+    .modal-content {
+        width: 65%;
+        max-width: 700px;
+        max-height: 75vh;
+        overflow-y: auto;
+        margin: 3% auto;
     }
 
-    .modal-description {
-        margin-bottom: 1rem;
+    .modal-image img {
+        height: 320px;
+    }
+
+    .modal-info {
+        padding: 1.6rem;
+    }
+
+    .modal-info h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .modal-info p {
+        font-size: 1.2rem;
+        margin-bottom: 0.7rem;
     }
 
     .modal-description h3,
@@ -322,44 +559,34 @@
     }
 
     .modal-description p {
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         line-height: 1.4;
     }
 
-    .modal-sizes {
-        margin-bottom: 1.5rem;
-    }
-
-    .size-options {
-        flex-wrap: wrap;
-        gap: 0.25rem;
-    }
-
     .size-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 0.8rem;
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
     }
 
     .modal-whatsapp-btn {
-        padding: 0.7rem;
+        padding: 0.8rem 1.3rem;
         font-size: 0.95rem;
-    }
-
-    .modal-image img {
-        height: 200px;
     }
 }
 
-/* Tablet específico (768px - 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
+/* Breakpoint para telas grandes (min-width: 1367px) */
+@media (min-width: 1367px) {
     .modal-content {
-        width: 85%;
-        max-width: 700px;
+        width: 55%;
+        max-width: 750px;
+        max-height: 80vh;
+        overflow-y: auto;
+        margin: 2% auto;
     }
 
     .modal-image img {
-        height: 350px;
+        height: 380px;
     }
 
     .modal-info {
@@ -367,10 +594,10 @@
     }
 
     .modal-info h2 {
-        font-size: 1.6rem;
+        font-size: 1.7rem;
     }
 
     .modal-info p {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
 }

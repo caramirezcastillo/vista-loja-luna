@@ -1,6 +1,6 @@
 /* Main Section */
 .main {
-    min-height: 60vh;
+    min-height: 45vh;
     display: flex;
     align-items: center;
     position: relative;
@@ -25,27 +25,27 @@
 
 .main-content {
     flex: 1;
-    padding: 2rem;
+    padding: 1.5rem;
     z-index: 2;
     position: relative;
     text-align: center;
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
 .main-title {
-    font-size: 4rem;
+    font-size: 3.2rem;
     font-weight: 700;
     color: white;
-    margin-bottom: 1rem;
-    letter-spacing: 2px;
+    margin-bottom: 0.8rem;
+    letter-spacing: 1.5px;
     animation: fadeInUp 1s ease;
 }
 
 .main-subtitle {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     animation: fadeInUp 1s ease 0.2s both;
 }
 
