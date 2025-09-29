@@ -49,7 +49,7 @@ const PRODUCTS_DATA = [
     },
 {
         id: 'vestido-em-couro-sintetico',
-        name: 'Vestido Floral Colorido',
+        name: 'Vestido em Couro Sintético',
         price: 55.00,
         image: 'img/vestido-em-couro-sintetico.jpeg',
         description: ' Vestido com tecido de 95% poliéster e 5% elastano, com efeito de couro sintético.  Cor marrom, sem forro e com costas nuas. Destaca-se pelo caimento justo que valoriza as curvas, ideal para produções marcantes.',
@@ -66,7 +66,7 @@ const PRODUCTS_DATA = [
 
 {
         id: 'vestido-de-cetim-sem-mangas-e-com-decote-em-v',
-        name: 'Vestido Floral Colorido',
+        name: 'Vestido de Cetim sem Mangas e com Decote em V. ',
         price: 110.00,
         image: 'img/vestido-de-cetim-sem-mangas-e-com-decote-em-v.jpeg',
         description: ' Vestido em tecido 100% poliéster, modelo em A suspensório, com alças finas, sem mangas e sem forro. Leve e versátil, é uma peça prática e elegante para composições casuais. ',
@@ -74,7 +74,7 @@ const PRODUCTS_DATA = [
     },
 {
         id: 'vestido-longo-de-leopardo-com-decote-profundo-em-v',
-        name: 'Vestido Floral Colorido',
+        name: 'Vestido Longo de Leopardo com Decote Profundo em V',
         price: 127.00,
         image: 'img/vestido-longo-de-leopardo-com-decote-profundo-em-v.jpeg',
         description: 'Vestido em tecido 98% poliéster e 2% elastano, com costas nuas, alças finas e cintura alta. Apresenta estampa de leopardo em padrão texturizado, combinando sensualidade e modernidade em uma peça de destaque. ',
