@@ -195,6 +195,8 @@
 
     .modal-body {
         grid-template-columns: 1fr;
+        gap: 0.8rem;
+        padding: 0.8rem;
     }
 
     .modal-image {
@@ -202,28 +204,28 @@
     }
 
     .modal-image img {
-        height: 220px;
+        height: 200px;
     }
 
     .modal-content {
         width: 90%;
-        margin: 8% auto;
-        max-height: 85vh;
+        margin: 5% auto;
+        max-height: 90vh;
         overflow-y: auto;
     }
 
     .modal-info {
-        padding: 1.2rem;
+        padding: 1rem;
     }
 
     .modal-info h2 {
         font-size: 1.4rem;
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.5rem;
     }
 
     .modal-info p {
         font-size: 1.2rem;
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.6rem;
     }
 
     .products-grid {
@@ -318,6 +320,87 @@
     .modal-whatsapp-btn {
         padding: 0.8rem;
         font-size: 0.9rem;
+    }
+}
+
+/* Breakpoint específico para resolução 463x870 e similares */
+@media (max-width: 470px) {
+    .modal-content {
+        width: 96%;
+        margin: 2% auto;
+        max-height: 96vh;
+        overflow-y: auto;
+    }
+
+    .modal-body {
+        flex-direction: column;
+        gap: 0.3rem;
+        max-height: calc(96vh - 30px);
+        overflow-y: auto;
+    }
+
+    .modal-image {
+        order: 1;
+        width: 100%;
+        margin-bottom: 0.4rem;
+    }
+
+    .modal-image img {
+        height: 160px;
+        object-fit: contain;
+        width: 100%;
+    }
+
+    .modal-info {
+        order: 2;
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .modal-info h2 {
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .modal-info p {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-description {
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-description h3,
+    .modal-sizes h3 {
+        font-size: 0.85rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .modal-description p {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .modal-sizes {
+        margin-bottom: 0.8rem;
+    }
+
+    .size-options {
+        flex-wrap: wrap;
+        gap: 0.15rem;
+    }
+
+    .size-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 0.65rem;
+    }
+
+    .modal-whatsapp-btn {
+        padding: 0.5rem;
+        font-size: 0.8rem;
     }
 }
 
@@ -500,93 +583,54 @@
 /* Tablet específico (768px - 1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
     .modal-content {
-        width: 80%;
-        max-width: 650px;
-        max-height: 75vh;
+        width: 85%;
+        max-width: 700px;
+        max-height: 85vh;
         overflow-y: auto;
         margin: 2% auto;
     }
 
+    .modal-body {
+        gap: 1rem;
+        padding: 1rem;
+    }
+
     .modal-image img {
-        height: 280px;
+        height: 300px;
     }
 
     .modal-info {
-        padding: 1.4rem;
+        padding: 1.5rem;
     }
 
     .modal-info h2 {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
+        margin-bottom: 0.8rem;
     }
 
     .modal-info p {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
     }
 }
 
 /* Breakpoint para telas médias (1025px - 1366px) - Notebooks */
 @media (min-width: 1025px) and (max-width: 1366px) {
     .modal-content {
-        width: 65%;
-        max-width: 700px;
-        max-height: 75vh;
-        overflow-y: auto;
-        margin: 3% auto;
-    }
-
-    .modal-image img {
-        height: 320px;
-    }
-
-    .modal-info {
-        padding: 1.6rem;
-    }
-
-    .modal-info h2 {
-        font-size: 1.5rem;
-        margin-bottom: 0.7rem;
-    }
-
-    .modal-info p {
-        font-size: 1.2rem;
-        margin-bottom: 0.7rem;
-    }
-
-    .modal-description h3,
-    .modal-sizes h3 {
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .modal-description p {
-        font-size: 0.95rem;
-        line-height: 1.4;
-    }
-
-    .size-btn {
-        width: 34px;
-        height: 34px;
-        font-size: 0.85rem;
-    }
-
-    .modal-whatsapp-btn {
-        padding: 0.8rem 1.3rem;
-        font-size: 0.95rem;
-    }
-}
-
-/* Breakpoint para telas grandes (min-width: 1367px) */
-@media (min-width: 1367px) {
-    .modal-content {
-        width: 55%;
-        max-width: 750px;
-        max-height: 80vh;
+        width: 70%;
+        max-width: 800px;
+        max-height: 85vh;
         overflow-y: auto;
         margin: 2% auto;
     }
 
+    .modal-body {
+        gap: 1.2rem;
+        padding: 1.2rem;
+    }
+
     .modal-image img {
-        height: 380px;
+        height: 350px;
     }
 
     .modal-info {
@@ -594,10 +638,90 @@
     }
 
     .modal-info h2 {
-        font-size: 1.7rem;
+        font-size: 1.6rem;
+        margin-bottom: 0.8rem;
     }
 
     .modal-info p {
         font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .modal-description h3,
+    .modal-sizes h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .modal-description p {
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .size-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .modal-whatsapp-btn {
+        padding: 0.9rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Breakpoint para telas grandes (min-width: 1367px) */
+@media (min-width: 1367px) {
+    .modal-content {
+        width: 60%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        margin: 1% auto;
+    }
+
+    .modal-body {
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .modal-image img {
+        height: 400px;
+    }
+
+    .modal-info {
+        padding: 2rem;
+    }
+
+    .modal-info h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal-info p {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal-description h3,
+    .modal-sizes h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .modal-description p {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .size-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    .modal-whatsapp-btn {
+        padding: 1rem 1.8rem;
+        font-size: 1.1rem;
     }
 }
