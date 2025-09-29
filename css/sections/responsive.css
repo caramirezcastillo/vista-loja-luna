@@ -624,6 +624,33 @@
         width: 6px;
         height: 6px;
     }
+
+    /* Reduzir altura da seção main para evitar espaçamento excessivo */
+    .main {
+        min-height: 25vh;
+        padding: 0.5rem 0;
+    }
+
+    .main-content {
+        padding: 0.8rem 0.5rem;
+    }
+
+    .main-title {
+        font-size: 1.4rem;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.5px;
+    }
+
+    .main-subtitle {
+        font-size: 0.8rem;
+        margin-bottom: 0.8rem;
+        padding: 0 0.5rem;
+    }
+
+    .cta-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.75rem;
+    }
 }
 
 /* Breakpoint para telas muito pequenas (max-width: 360px) */
